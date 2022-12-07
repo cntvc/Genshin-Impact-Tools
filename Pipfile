@@ -12,9 +12,9 @@ requests = "*"
 [dev-packages]
 isort = "*"
 pytest = "*"
-pylint = "*"
 pyinstaller = "*"
 genshin = {editable = true, path = "."}
+flake8 = "*"
 
 [requires]
 python_version = "3.7"
