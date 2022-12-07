@@ -1,6 +1,7 @@
 """clipboard tools"""
 from typing import Optional
 
+import win32api
 import win32clipboard
 import win32con
 
@@ -14,14 +15,15 @@ def get_clipboad_text_or_html() -> Optional[str]:
         win32clipboard.OpenClipboard(0)
 
         # 注册 CF_HTML 格式剪贴板
+        # https://learn.microsoft.com/zh-cn/windows/win32/dataxchg/html-clipboard-format
         CF_HTML = win32clipboard.RegisterClipboardFormat("HTML Format")
         CF_TEXT = win32con.CF_TEXT
         logger.debug(f"CF_HTML={CF_HTML}")
 
-        cf = win32clipboard.EnumClipboardFormats(0)
-        while cf != 0:
-            formats.append(cf)
-            cf = win32clipboard.EnumClipboardFormats(cf)
+        clipboard_format = win32clipboard.EnumClipboardFormats(0)
+        while clipboard_format != 0:
+            formats.append(clipboard_format)
+            clipboard_format = win32clipboard.EnumClipboardFormats(clipboard_format)
         logger.debug(f"EnumClipboardFormats={formats}")
 
         if CF_HTML in formats:
@@ -38,7 +40,7 @@ def get_clipboad_text_or_html() -> Optional[str]:
             return None
 
         return data
-    except Exception as err:
+    except win32api.error as err:
         logger.error(f"读取剪贴板错误 {err}")
         return None
     finally:
