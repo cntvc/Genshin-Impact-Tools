@@ -115,7 +115,8 @@ class CacheUrl(AbstractUrl):
 
 class ConfigUrl(AbstractUrl):
 
-    user_data_dir_re = re.compile("^\d{9,}$") # pylint: disable=all
+    user_data_dir_re = re.compile("^[0-9]{9,}$")
+
     def get_user_list(self):
         if not os.path.isdir(settings.USER_DATA_PATH):
             return []

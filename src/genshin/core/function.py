@@ -100,7 +100,8 @@ def input_int(left: int, rigth: int):
             continue
         return index
 
-def request_get(url:str, timeout=settings.TIMEOUT):
+
+def request_get(url: str, timeout=settings.TIMEOUT):
     if not url:
         return None
     try:

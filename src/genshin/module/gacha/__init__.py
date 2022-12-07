@@ -1,5 +1,4 @@
 """gacha module"""
-import os
 from pathlib import Path
 
 from genshin.config import settings
