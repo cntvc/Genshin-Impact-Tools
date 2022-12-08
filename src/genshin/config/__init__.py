@@ -74,10 +74,14 @@ def _remove_dict(data: dict, save_list: list) -> dict:
     return {key: val for key, val in data.items() if key in save_list}
 
 
-def save_config(path=_user_config_path.as_posix(), environment=None):
+def save_config(path=_user_config_path, environment=None):
     """
     save user setting
     """
+    if not path.parent.exists():
+        os.makedirs(path.parent)
+    if not path.exists():
+        path.touch()
     data = settings.as_dict(env=environment)
     data = _remove_dict(data, settings.USER_SETTING_LIST)
-    loaders.write(path, data, env=environment)
+    loaders.write(path.as_posix(), data, env=environment)
