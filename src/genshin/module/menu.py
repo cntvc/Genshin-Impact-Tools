@@ -109,7 +109,7 @@ class Menu:
     """
 
     def __init__(self, root_op: MenuItem) -> None:
-        self._current_op = root_op
+        self.menu_item = root_op
 
     def display(self):
         """
@@ -118,10 +118,13 @@ class Menu:
         clear_screen()
 
         print("======================================")
-        for index, option in enumerate(self._current_op.options):
+        for index, option in enumerate(self.menu_item.options):
             print(f"{index+1}.{option.name}")
         print("")
-        print("0.返回上级菜单")
+        if self.menu_item and self.menu_item.parent:
+            print("0.返回上级菜单")
+        else:
+            print("0.退出程序")
         print("======================================")
 
     def select_option(self):
@@ -130,19 +133,18 @@ class Menu:
         """
         print("请输入数字选择菜单项:")
         while True:
-            index = input_int(0, len(self._current_op.options))
+            index = input_int(0, len(self.menu_item.options))
 
             if index == 0:
-                parent = self._current_op.parent
+                parent = self.menu_item.parent
                 if parent:
-                    self._current_op = parent
+                    self.menu_item = parent
                     self.display()
                     self.select_option()
                 else:
-                    print("当前已为主菜单，无父菜单项")
-                    continue
+                    exit()
             else:
-                select_op: MenuItem = self._current_op.options[index - 1]
+                select_op: MenuItem = self.menu_item.options[index - 1]
 
                 # if op type is func, call func()
                 if select_op.func:
@@ -152,6 +154,6 @@ class Menu:
 
                 # if op type is Option, display child list
                 else:
-                    self._current_op = select_op
+                    self.menu_item = select_op
                     self.display()
                     self.select_option()

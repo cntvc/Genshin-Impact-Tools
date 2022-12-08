@@ -10,19 +10,6 @@ from genshin.core import logger
 from genshin.module.gacha.gacha_data_struct import (GACHA_QUERY_TYPE_IDS,
                                                     GACHA_TYPE_DICT)
 
-"""
-根据设置，自动生成报告
-
-也可单独调用，读取数据文件直接生成
-
-若无文件数据文件，给出提示如何操作
-
-默认调用全部生成器，可单独关闭某个文件是否生成
-1. 抽卡报告-图片 matplotlib.pyplot 绘图
-2. XLSX文件
-3. UIGF-json文件
-"""
-
 
 class AbstractGenerator(metaclass=abc.ABCMeta):
     def __init__(self, data: Optional[dict], uid: Optional[str]) -> None:
@@ -110,7 +97,7 @@ class XLSXGenerator(AbstractGenerator):
 
             logger.debug("开始写入 {}, 共 {} 条数据", gacha_type_name, len(gacha_type_List))
             worksheet = workbook.add_worksheet(gacha_type_name)
-            excel_header = ["总次数", "时间", "名称", "类别", "星级", "祈愿类型", "保底内"]
+            excel_header = ["总次数", "时间", "名称", "类别", "星级", "祈愿类型", "保底内抽数"]
 
             worksheet.set_column("B:B", 22)
             worksheet.set_column("C:C", 14)
