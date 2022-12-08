@@ -12,18 +12,20 @@ from requests import RequestException, Timeout
 from genshin.config import settings
 from genshin.core.log import logger
 
-
-def save_json(full_path: str, data):
-    """
-    save json data to full_path
-    """
+def touch(full_path:str):
     path = Path(full_path)
     if not path.parent.exists():
         os.makedirs(path.parent)
     if not path.exists():
         path.touch()
+
+def save_json(full_path: str, data):
+    """
+    save json data to full_path
+    """
+    touch(full_path)
     try:
-        with open(path, "w", encoding="utf-8") as file:
+        with open(full_path, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, sort_keys=False, indent=4)
     except IOError as err:
         logger.error("{}\n{}", err, full_path)
@@ -56,11 +58,7 @@ def save_data(full_path: str, data):
     """
     save data to full_path
     """
-    path = Path(full_path)
-    if not path.parent.exists():
-        os.makedirs(path.parent)
-    if not path.exists():
-        path.touch()
+    touch(full_path)
     try:
         with open(full_path, "w", encoding="utf-8") as file:
             file.write(data)
