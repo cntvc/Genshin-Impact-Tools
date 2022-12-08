@@ -12,12 +12,14 @@ from requests import RequestException, Timeout
 from genshin.config import settings
 from genshin.core.log import logger
 
-def touch(full_path:str):
+
+def touch(full_path: str):
     path = Path(full_path)
     if not path.parent.exists():
         os.makedirs(path.parent)
     if not path.exists():
         path.touch()
+
 
 def save_json(full_path: str, data):
     """

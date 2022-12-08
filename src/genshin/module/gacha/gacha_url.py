@@ -125,7 +125,7 @@ class ConfigUrl(AbstractUrl):
         for name in file_list:
             if os.path.isfile(name):
                 file_list.remove(name)
-            elif not self.user_data_dir_re.match(name):
+            elif not ConfigUrl.user_data_dir_re.match(name):
                 file_list.remove(name)
 
         user_list = []

@@ -94,29 +94,40 @@ class GachaLog:
         url = path + "?" + param
         return url
 
-    @staticmethod
-    def merge(data, merge_data: dict) -> dict:
-        """
-        merge gacha log
-        """
-        # TODO 需兼容部分记录缺失的源文件
-        for gacha_type in GACHA_QUERY_TYPE_DICT:
-            history_gacha_log = merge_data["list"][gacha_type]
-            new_gacha_log = data["list"][gacha_type]
-            if len(history_gacha_log):
-                history_latest_data = history_gacha_log[-1]
-                # 根据抽卡id比较大小，找出新的抽卡记录并保存在 temp_gacha_data
-                temp_gacha_data = [
-                    log for log in new_gacha_log if log["id"] > history_latest_data["id"]
-                ]
-            else:
-                temp_gacha_data = new_gacha_log
 
-            history_gacha_log.extend(temp_gacha_data)
-            logger.info(
-                "抽卡历史记录合并 =====+> {} \t增加了 {} \t条记录",
-                GACHA_QUERY_TYPE_DICT[gacha_type],
-                len(temp_gacha_data),
-            )
-        data = merge_data
-        return data
+def load_json():
+    """从json文件加载数据"""
+    pass
+
+
+def load_xlsx():
+    """从xlsx文件加载数据"""
+    pass
+
+
+# 可单独调用，提供入口跳过查询抽卡步骤合并
+def merge_data(data, merge_data: dict) -> dict:
+    """
+    merge gacha log
+    """
+    # TODO 需兼容部分记录缺失的源文件
+    for gacha_type in GACHA_QUERY_TYPE_DICT:
+        history_gacha_log = merge_data["list"][gacha_type]
+        new_gacha_log = data["list"][gacha_type]
+        if len(history_gacha_log):
+            history_latest_data = history_gacha_log[-1]
+            # 根据抽卡id比较大小，找出新的抽卡记录并保存在 temp_gacha_data
+            temp_gacha_data = [
+                log for log in new_gacha_log if log["id"] > history_latest_data["id"]
+            ]
+        else:
+            temp_gacha_data = new_gacha_log
+
+        history_gacha_log.extend(temp_gacha_data)
+        logger.info(
+            "抽卡历史记录合并 =====+> {} \t增加了 {} \t条记录",
+            GACHA_QUERY_TYPE_DICT[gacha_type],
+            len(temp_gacha_data),
+        )
+    data = merge_data
+    return data
