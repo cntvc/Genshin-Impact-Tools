@@ -5,6 +5,7 @@ from typing import List
 from genshin.config import settings
 from genshin.core import logger
 from genshin.core.function import load_json, save_json
+from genshin.module.gacha.data_transform import merge_data
 from genshin.module.gacha.gacha_log import GachaLog
 from genshin.module.gacha.gacha_url import UrlFactory, verify_url
 from genshin.module.gacha.report_gengrator import (AbstractGenerator,
@@ -26,10 +27,7 @@ class ExportManager:
         self.gacha_log.query()
 
         gacha_data_path = Path(settings.USER_DATA_PATH, self.gacha_log.uid, "gacha_data.json")
-        # history = load_json(gacha_data_path)
-        # if history:
-        #     # If historical data is available, it will be merged with current data
-        #     self.gacha_log.data = merge_data(self.gacha_log.data, history)
+        self.merge_date(gacha_data_path)
 
         if not save_json(gacha_data_path, self.gacha_log.data):
             logger.warning("导出失败，请尝试其他方法")
@@ -37,6 +35,15 @@ class ExportManager:
         logger.info("抽卡数据导出成功")
         self.save_user_config()
         self.generator_report()
+
+    def merge_date(self, history_path):
+        """
+        If historical data is available, it will be merged with current data
+        """
+        history = load_json(history_path)
+        if history:
+            logger.info("合并历史数据")
+            self.gacha_log.data = merge_data(self.gacha_log.data, history)
 
     def generator_report(self):
         for generator in self.generators:
