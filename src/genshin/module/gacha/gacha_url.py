@@ -30,6 +30,7 @@ def verify_url(url: str):
 
     if url can't access, return False
     """
+    logger.info("验证链接有效性")
     res = request_get(url)
     if not res:
         return False
@@ -44,7 +45,7 @@ def verify_url(url: str):
         else:
             logger.warning("数据为空，错误代码：" + res_json["message"])
         return False
-
+    logger.info("链接可用")
     return True
 
 
@@ -92,6 +93,8 @@ class CacheUrl(AbstractUrl):
         get gacha url from game cache file
         """
         cache_file = self.get_cache_path()
+        if not cache_file:
+            return None
         with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_file:
             tmp_file_name = tmp_file.name
         copyfile(str(cache_file), str(tmp_file_name))

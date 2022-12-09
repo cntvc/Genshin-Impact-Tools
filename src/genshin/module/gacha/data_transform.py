@@ -44,8 +44,8 @@ def merge_data(first: dict, second: dict):
     }
     """
 
-    first_info = varify_data(first)
-    second_info = varify_data(second)
+    first_info = first["info"]
+    second_info = second["info"]
     logger.debug(first_info)
     logger.debug(second_info)
 
@@ -55,7 +55,7 @@ def merge_data(first: dict, second: dict):
         logger.warning("数据信息不一致，无法合并")
         return None
 
-    logger.info("开始合并数据")
+    logger.debug("开始合并数据")
     first["info"] = generator_info(first_info["uid"], first_info["lang"])
 
     for gacha_type in GACHA_QUERY_TYPE_DICT:
@@ -69,12 +69,12 @@ def merge_data(first: dict, second: dict):
 
         first_log.extend(temp_data)
         sorted(first_log,  key=lambda data: data["id"])
-        logger.info(
+        logger.debug(
             "数据合并 =====+> {} 共 {} \t条记录",
             GACHA_QUERY_TYPE_DICT[gacha_type],
             len(first_log),
         )
-    logger.info("数据合并完成")
+    logger.debug("数据合并完成")
     return first
 
 
@@ -93,13 +93,13 @@ def varify_data(gacha_data: dict):
             if not uid:
                 uid = data["uid"]
             elif uid != data["uid"]:
-                logger.warning("数据中存在其他用户抽卡记录")
+                logger.warning("数据中存在不同用户抽卡记录")
                 return False
 
             if not lang:
                 lang = data["lang"]
             elif lang != data["lang"]:
-                logger.warning("数据中存在其他语言抽卡记录")
+                logger.warning("数据中存在不同语言抽卡记录")
                 return False
 
     gacha_data["info"] = generator_info(uid, lang)

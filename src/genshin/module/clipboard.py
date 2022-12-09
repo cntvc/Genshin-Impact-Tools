@@ -10,6 +10,7 @@ from genshin.core import logger
 
 def get_clipboad_text_or_html() -> Optional[str]:
     """get str from clipboad"""
+    logger.info("尝试读取剪切板")
     try:
         formats = []
         win32clipboard.OpenClipboard(0)

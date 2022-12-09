@@ -7,7 +7,7 @@ from typing import List
 from genshin.config import settings
 from genshin.core import logger
 from genshin.core.function import load_json, save_json
-from genshin.module.gacha.data_transform import merge_data
+from genshin.module.gacha.data_transform import merge_data, varify_data
 from genshin.module.gacha.gacha_log import GachaLog
 from genshin.module.gacha.gacha_url import UrlFactory, verify_url
 from genshin.module.gacha.report_gengrator import report
@@ -34,7 +34,7 @@ class ExportManager:
         if not save_json(gacha_data_path, self.data):
             logger.warning("导出失败，请尝试其他方法")
             return
-        logger.info("抽卡数据导出成功")
+        logger.info("原始抽卡数据导出成功")
         self.save_user_config()
         self.generator_report()
 
@@ -79,11 +79,21 @@ def merge():
         file = Path(file)
         if file.suffix != ".json":
             files.remove(file)
+    logger.info("共扫描到 {} 个文件:", len(files))
+    logger.info(files)
 
     datas = []
     for file in files:
+        data = load_json(Path(path, file))
+        if not varify_data(data):
+            logger.warning("文件 '{}' 中数据存在错误，此文件不会被合并")
+            continue
         datas.append(load_json(Path(path, file)))
+
+    logger.info("准备合并以下几个文件：\n{}\n", "".join(files))
+    logger.info("合并数据中")
     data = _merge_recursion(datas)[0]
+    logger.info("合并数据完成")
     save_json(Path(settings.USER_DATA_PATH, data["info"]["uid"], "gacha_data.json"), data)
     report.data = data
     report.uid = data["info"]["uid"]

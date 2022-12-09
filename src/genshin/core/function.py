@@ -19,6 +19,7 @@ def touch(full_path: str):
         os.makedirs(path.parent)
     if not path.exists():
         path.touch()
+    logger.debug("创建文件{}", path)
 
 
 def save_json(full_path: str, data):
@@ -43,7 +44,6 @@ def load_json(full_path: str):
     load json data from file
     """
     if not Path(full_path).exists():
-        logger.warning("文件{}不存在\n", full_path)
         return None
     try:
         with open(full_path, "r", encoding="UTF-8") as file:
@@ -93,11 +93,11 @@ def input_int(left: int, rigth: int):
         try:
             index = int(index)
         except (TypeError, ValueError):
-            logger.warning("{} 为非法输入，请重试", index)
+            logger.warning("'{}' 为非法输入，请重试", index)
             continue
 
         if index > rigth or index < left:
-            logger.warning("{} 为非法输入，请重试", index)
+            logger.warning("'{}' 为非法输入，请重试", index)
             continue
         return index
 
@@ -108,9 +108,9 @@ def request_get(url: str, timeout=settings.TIMEOUT):
     try:
         res = requests.get(url, timeout=timeout).content.decode("utf-8")
     except Timeout:
-        logger.warning("请求超时, 请检查网络连接状态")
+        logger.warning("链接请求超时, 请检查网络连接状态")
         return None
     except RequestException:
-        logger.error("API请求解析出错\n{}", traceback.format_exc())
+        logger.error("链接请求解析出错\n{}", traceback.format_exc())
         return None
     return res

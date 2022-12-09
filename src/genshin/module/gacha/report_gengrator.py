@@ -55,6 +55,7 @@ class XLSXGenerator(AbstractGenerator):
         return Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览.xlsx").as_posix()
 
     def generator(self):
+        logger.info("开始生成XLSX报告")
         try:
             from xlsxwriter import Workbook
         except ImportError as e:
@@ -158,7 +159,7 @@ class XLSXGenerator(AbstractGenerator):
             )
 
         workbook.close()
-        logger.debug("工作簿写入完成")
+        logger.info("xlsx文件写入完成")
         return True
 
 
@@ -169,12 +170,14 @@ class ReportManager:
         self.generators: List[AbstractGenerator] = []
 
     def generator_report(self):
+        logger.info("开始生成抽卡报告")
         for generator in self.generators:
             if not generator.status():
                 continue
             generator.data = self.data
             generator.uid = self.uid
             generator.generator()
+        logger.info("生成抽卡报告任务完成")
 
     def add_generator(self, generator: AbstractGenerator):
         self.generators.append(generator)

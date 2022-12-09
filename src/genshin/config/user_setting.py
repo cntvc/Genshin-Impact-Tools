@@ -2,7 +2,6 @@ from genshin.config import settings
 from genshin.core import logger
 from genshin.module.gacha.report_gengrator import xlsx_generator
 
-
 __all__ = ["update_auto_merge", "update_generator_xlsx"]
 
 
