@@ -79,7 +79,7 @@ def merge():
         file = Path(file)
         if file.suffix != ".json":
             files.remove(file)
-    logger.info("共扫描到 {} 个文件:", len(files))
+    logger.info("共扫描到 {} 个文件", len(files))
     if len(files) < 2:
         logger.info("可合并文件数量低于2个，退出合并程序")
         return
@@ -92,7 +92,7 @@ def merge():
             continue
         datas.append(data)
 
-    logger.warning("准备合并以下几个文件：\n{}\n", "\t".join(files))
+    logger.info("准备合并以下几个文件：\n{}\n", "\n".join(files))
 
     logger.info("合并数据中...")
     data = _merge_recursion(datas)[0]

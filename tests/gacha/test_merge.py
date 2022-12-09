@@ -1,11 +1,9 @@
-import os
 from pathlib import Path
-from genshin.module.gacha import merge
-from genshin.config import settings
-from genshin.core import logger
 
-from genshin.module.gacha.data_struct import GACHA_QUERY_TYPE_IDS
+from genshin.config import settings
 from genshin.core.function import load_json
+from genshin.module.gacha import merge
+
 
 def test_merge():
     merge()
