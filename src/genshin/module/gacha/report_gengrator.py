@@ -3,12 +3,12 @@ gacha data export
 """
 import abc
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from genshin.config import settings, update_and_save
 from genshin.core import logger
-from genshin.module.gacha.gacha_data_struct import (GACHA_QUERY_TYPE_IDS,
-                                                    GACHA_TYPE_DICT)
+from genshin.module.gacha.data_struct import (GACHA_QUERY_TYPE_IDS,
+                                              GACHA_TYPE_DICT)
 
 
 class AbstractGenerator(metaclass=abc.ABCMeta):
@@ -160,3 +160,27 @@ class XLSXGenerator(AbstractGenerator):
         workbook.close()
         logger.debug("工作簿写入完成")
         return True
+
+
+class ReportManager:
+    def __init__(self, data: Optional[dict], uid: Optional[str]) -> None:
+        self.data = data
+        self.uid = uid
+        self.generators: List[AbstractGenerator] = []
+
+    def generator_report(self):
+        for generator in self.generators:
+            if not generator.status():
+                continue
+            generator.data = self.data
+            generator.uid = self.uid
+            generator.generator()
+
+    def add_generator(self, generator: AbstractGenerator):
+        self.generators.append(generator)
+
+
+xlsx_generator = XLSXGenerator(None, None)
+
+report = ReportManager(None, None)
+report.add_generator(xlsx_generator)

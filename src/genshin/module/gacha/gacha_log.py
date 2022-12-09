@@ -6,8 +6,9 @@ from urllib import parse
 
 from genshin.core import logger
 from genshin.core.function import request_get
-from genshin.module.gacha.gacha_data_struct import (GACHA_QUERY_TYPE_DICT,
-                                                    GACHA_QUERY_TYPE_IDS)
+from genshin.module.gacha.data_struct import (GACHA_QUERY_TYPE_DICT,
+                                              GACHA_QUERY_TYPE_IDS)
+from genshin.module.gacha.data_transform import generator_info
 
 
 class GachaLog:
@@ -45,13 +46,11 @@ class GachaLog:
         gacha_log = self.data["list"][gacha_type_id]
 
         # set info
-        self.data["info"] = {}
-        self.data["info"]["uid"] = self.uid
-        self.data["info"]["lang"] = lang
-        self.data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.data["info"] = generator_info(self.uid, lang)
 
         # set gacha_type
         self.data["gacha_type"] = GACHA_QUERY_TYPE_DICT
+        return self.data, self.uid
 
     def _query_by_type_id(self, gacha_type_id):
         """

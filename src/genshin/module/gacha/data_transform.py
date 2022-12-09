@@ -4,8 +4,12 @@ gacha_transform
 json->xlsx
 xlsx->json
 """
+import time
+
+from genshin import APP_NAME
+from genshin import __version__ as version
 from genshin.core import logger
-from genshin.module.gacha.gacha_data_struct import GACHA_QUERY_TYPE_DICT
+from genshin.module.gacha.data_struct import GACHA_QUERY_TYPE_DICT
 
 
 def load_xlsx() -> dict:
@@ -52,6 +56,7 @@ def merge_data(first: dict, second: dict):
         return None
 
     logger.info("开始合并数据")
+    first["info"] = generator_info(first_info["uid"], first_info["lang"])
 
     for gacha_type in GACHA_QUERY_TYPE_DICT:
         second_log = second["list"][gacha_type]
@@ -77,32 +82,35 @@ def varify_data(gacha_data: dict):
     """
     验证数据一致性
     """
-    info = {}
-    info["uid"] = ""
-    info["lang"] = ""
-    info["start_time"] = ""
-    info["end_time"] = ""
+    uid = None
+    lang = None
+
     for gacha_type in GACHA_QUERY_TYPE_DICT:
         for data in gacha_data["list"][gacha_type]:
             if not data:
                 continue
 
-            if not info["uid"]:
-                info["uid"] = data["uid"]
-            elif info["uid"] != data["uid"]:
+            if not uid:
+                uid = data["uid"]
+            elif uid != data["uid"]:
                 logger.warning("数据中存在其他用户抽卡记录")
                 return False
 
-            if not info["lang"]:
-                info["lang"] = data["lang"]
-            elif info["lang"] != data["lang"]:
+            if not lang:
+                lang = data["lang"]
+            elif lang != data["lang"]:
                 logger.warning("数据中存在其他语言抽卡记录")
                 return False
 
-            if (not info["end_time"]) or (info["end_time"] < data["time"]):
-                info["end_time"] = data["time"]
+    gacha_data["info"] = generator_info(uid, lang)
+    return gacha_data["info"]
 
-            if (not info["start_time"]) or (info["start_time"] > data["time"]):
-                info["start_time"] = data["time"]
 
+def generator_info(uid, lang):
+    info = {}
+    info["uid"] = uid
+    info["lang"] = lang
+    info["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    info["export_app"] = APP_NAME
+    info["export_app_version"] = version
     return info

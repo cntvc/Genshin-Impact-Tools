@@ -3,6 +3,7 @@ Menu
 """
 from typing import Callable, Optional
 
+from genshin.core import logger
 from genshin.core.function import clear_screen, input_int, pause
 
 
@@ -142,6 +143,7 @@ class Menu:
                     self.display()
                     self.select_option()
                 else:
+                    logger.info("程序退出")
                     exit()
             else:
                 select_op: MenuItem = self.menu_item.options[index - 1]
