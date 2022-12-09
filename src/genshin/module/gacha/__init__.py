@@ -22,7 +22,7 @@ class ExportManager:
     def export(self, url_source: int):
         url_product = UrlFactory.produce(url_source)
         self.url = url_product.get_url()
-        if not verify_url(self.url):
+        if not self.url or not verify_url(self.url):
             logger.warning("导出失败，请尝试其他方法")
             return
         gacha_log = GachaLog(self.url)
@@ -111,3 +111,6 @@ def _merge_recursion(datas: List[dict]):
     left = _merge_recursion(datas[0:middle])
     right = _merge_recursion(datas[middle:])
     return _merge_recursion(left+right)
+
+
+export = ExportManager()

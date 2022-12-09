@@ -1,58 +1,127 @@
+
+import math
+from typing import Callable
+
 from genshin.config import settings
 from genshin.config.user_setting import (update_auto_merge,
                                          update_generator_xlsx)
-from genshin.module.gacha import ExportManager, merge
-from genshin.module.menu import Menu, MenuItem
+from genshin.core.function import clear_screen, input_int, pause
+from genshin.module.gacha import export, merge
 
 
-def init_menu():
-    export_manager = ExportManager()
-    xlsx_op = [
-        MenuItem("打开 导出XLSX文件", update_generator_xlsx, [], None, True),
-        MenuItem("关闭 导出XLSX文件", update_generator_xlsx, [], None, False),
-    ]
-    auto_merge = [
-        MenuItem("打开 自动合并历史抽卡记录", update_auto_merge, [], None, True),
-        MenuItem("关闭 自动合并历史抽卡记录", update_auto_merge, [], None, False),
-    ]
-    user_setting = [
-        MenuItem("设置导出XLSX文件", None, xlsx_op, None),
-        MenuItem("设置自动合并历史抽卡记录", None, auto_merge, None),
-    ]
-    export_menu = [
-        MenuItem(
-            "通过游戏缓存文件导出",
-            export_manager.export,
-            [],
-            None,
-            url_source=settings.URL_SOURCE_GAMECACHE,
-        ),
-        MenuItem(
-            "通过剪切板导出",
-            export_manager.export,
-            [],
-            None,
-            url_source=settings.URL_SOURCE_CLIPBOARD,
-        ),
-        MenuItem(
-            "通过配置文件导出",
-            export_manager.export,
-            [],
-            None,
-            url_source=settings.URL_SOURCE_CONFIG
-        ),
-    ]
-    main_op = [
-        MenuItem("导出抽卡记录", None, export_menu, None),
-        MenuItem("合并抽卡记录", merge, [], None),
-        MenuItem("软件设置", None, user_setting, None),
-    ]
-    root_op = MenuItem("Genshin Impact Tools", None, main_op, None)
-    menu = Menu(root_op)
-    return menu
+class Menu:
+    def __init__(self, menu: dict) -> None:
+        self.menu = menu
+        self.stack = []
+        self.stack.append(menu)
 
+    def display(self):
+        """
+        show menu content
+        """
+        clear_screen()
+        # 让标题打印在中间
+        DEFAULT_LENGTH = 40
+        description: str = self.menu["description"]
+        space_size = math.floor((DEFAULT_LENGTH - len(description))/2)
+        print(" " * space_size + description)
+        print("========================================")
+        options: list = self.menu["options"]
+        for index, option in enumerate(options):
+            print("{}.{}".format(index+1, option["description"]))
+        print("")
+        if len(self.stack) > 1:
+            print("0.返回上级菜单")
+        else:
+            print("0.退出程序")
+        print("========================================")
+
+    def run(self):
+        while self.stack:
+            # 获取当前菜单
+            self.menu = self.stack[-1]
+            self.display()
+            options: list = self.menu["options"]
+            print("请输入数字选择菜单项:")
+            choice = input_int(0, len(options))
+
+            # 根据当前菜单的内容的类型进行相应的处理
+            if choice == 0:
+                self.stack.pop()
+                continue
+
+            # option : (Callable | list)
+            option = options[choice-1]["options"]
+
+            if isinstance(option, list):
+                self.stack.append(options[choice-1])
+                self.display()
+                self.run()
+            elif isinstance(option, Callable):
+                option()
+                pause()
+                self.display()
+
+
+menu_item = {
+    "description": "主菜单",
+    "options": [
+        {
+            "description": "导出抽卡数据",
+            "options": [
+                {
+                    "description": "通过游戏缓存导出",
+                    "options": lambda: export.export(settings.URL_SOURCE_GAMECACHE)
+                },
+                {
+                    "description": "通过软件缓存链接导出",
+                    "options": lambda: export.export(settings.URL_SOURCE_CONFIG)
+                },
+                {
+                    "description": "通过剪切板导出",
+                    "options": lambda: export.export(settings.URL_SOURCE_CLIPBOARD)
+                },
+            ]
+        },
+        {
+            "description": "合并抽卡记录",
+            "options": lambda: merge()
+        },
+        {
+            "description": "软件设置",
+            "options": [
+                {
+                    "description": "导出XLSX文件",
+                    "options": [
+                        {
+                            "description": "打开导出XLSX文件",
+                            "options": lambda: update_generator_xlsx(settings.OPEN)
+                        },
+                        {
+                            "description": "关闭导出XLSX文件",
+                            "options": lambda: update_generator_xlsx(settings.CLOSE)
+                        }
+                    ]
+                },
+                {
+                    "description": "自动合并历史记录",
+                    "options": [
+                        {
+                            "description": "打开自动合并历史记录",
+                            "options": lambda: update_auto_merge(settings.OPEN)
+                        },
+                        {
+                            "description": "关闭自动合并历史记录",
+                            "options": lambda: update_auto_merge(settings.CLOSE)
+                        }
+                    ]
+                },
+            ]
+        }
+    ]
+}
+
+menu = Menu(menu_item)
 
 if __name__ == "__main__":
-    menu = init_menu()
-    menu.display()
-    menu.select_option()
+    menu.run()

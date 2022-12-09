@@ -28,6 +28,9 @@ MIHOYO_CHAHE_PATH = Path(Path.home(), "AppData", "LocalLow", "miHoYo").as_posix(
 # Request timeout limit
 TIMEOUT = 10
 
+OPEN = True
+
+CLOSE = False
 
 #####################################################
 # Export gacha log URL source type                  #
