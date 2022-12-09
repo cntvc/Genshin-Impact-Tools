@@ -50,10 +50,16 @@ USER_DATA_PATH = APP_RUN_PATH + "/Genshin_Impact_tools"
 
 # Check update application
 FLAG_CHECK_UPDATE = True
+
+# generator xlsx report
 FLAG_EXPORT_XLSX = True
+
+# auto merge history data
+FLAG_AUTO_MERGE = True
 
 # List of user configurable options
 USER_SETTING_LIST = [
     "FLAG_CHECK_UPDATE",
     "FLAG_EXPORT_XLSX",
+    "FLAG_AUTO_MERGE",
 ]

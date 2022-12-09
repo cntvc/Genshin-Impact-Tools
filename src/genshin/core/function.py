@@ -43,6 +43,7 @@ def load_json(full_path: str):
     load json data from file
     """
     if not Path(full_path).exists():
+        logger.warning("文件{}不存在\n", full_path)
         return None
     try:
         with open(full_path, "r", encoding="UTF-8") as file:

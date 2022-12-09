@@ -1,21 +1,24 @@
-"""Main"""
 from genshin.config import settings
-from genshin.module.gacha import export_manager, xlsx_generator
+from genshin.config.user_setting import (update_auto_merge,
+                                         update_generator_xlsx)
+from genshin.module.gacha import ExportManager, merge
 from genshin.module.menu import Menu, MenuItem
 
 
-def create_user_setting():
+def init_menu():
+    export_manager = ExportManager()
     xlsx_op = [
-        MenuItem("关闭导出XLSX文件", xlsx_generator.close, [], None),
-        MenuItem("打开导出XLSX文件", xlsx_generator.open, [], None)
+        MenuItem("打开 导出XLSX文件", update_generator_xlsx, [], None, True),
+        MenuItem("关闭 导出XLSX文件", update_generator_xlsx, [], None, False),
+    ]
+    auto_merge = [
+        MenuItem("打开 自动合并历史抽卡记录", update_auto_merge, [], None, True),
+        MenuItem("关闭 自动合并历史抽卡记录", update_auto_merge, [], None, False),
     ]
     user_setting = [
         MenuItem("设置导出XLSX文件", None, xlsx_op, None),
+        MenuItem("设置自动合并历史抽卡记录", None, auto_merge, None),
     ]
-    return user_setting
-
-
-def create_export_menu():
     export_menu = [
         MenuItem(
             "通过游戏缓存文件导出",
@@ -39,14 +42,10 @@ def create_export_menu():
             url_source=settings.URL_SOURCE_CONFIG
         ),
     ]
-    return export_menu
-
-
-def init_menu():
     main_op = [
-        MenuItem("抽卡记录", None, create_export_menu(), None),
-        MenuItem("生成抽卡报告", None, [], None),
-        MenuItem("软件设置", None, create_user_setting(), None),
+        MenuItem("导出抽卡记录", None, export_menu, None),
+        MenuItem("合并抽卡记录", merge, [], None),
+        MenuItem("软件设置", None, user_setting, None),
     ]
     root_op = MenuItem("Genshin Impact Tools", None, main_op, None)
     menu = Menu(root_op)

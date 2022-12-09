@@ -1,4 +1,6 @@
 """gacha module"""
+import math
+import os
 from pathlib import Path
 from typing import List
 
@@ -8,28 +10,28 @@ from genshin.core.function import load_json, save_json
 from genshin.module.gacha.data_transform import merge_data
 from genshin.module.gacha.gacha_log import GachaLog
 from genshin.module.gacha.gacha_url import UrlFactory, verify_url
-from genshin.module.gacha.report_gengrator import (AbstractGenerator,
-                                                   XLSXGenerator)
+from genshin.module.gacha.report_gengrator import report
 
 
 class ExportManager:
     def __init__(self) -> None:
-        self.gacha_log: GachaLog = None
-        self.generators: List[AbstractGenerator] = []
+        self.data: dict = None
+        self.uid: str = None
+        self.url: str = None
 
     def export(self, url_source: int):
         url_product = UrlFactory.produce(url_source)
-        url = url_product.get_url()
-        if not verify_url(url):
+        self.url = url_product.get_url()
+        if not verify_url(self.url):
             logger.warning("导出失败，请尝试其他方法")
             return
-        self.gacha_log = GachaLog(url)
-        self.gacha_log.query()
+        gacha_log = GachaLog(self.url)
+        self.data, self.uid = gacha_log.query()
 
-        gacha_data_path = Path(settings.USER_DATA_PATH, self.gacha_log.uid, "gacha_data.json")
+        gacha_data_path = Path(settings.USER_DATA_PATH, self.uid, "gacha_data.json")
         self.merge_date(gacha_data_path)
 
-        if not save_json(gacha_data_path, self.gacha_log.data):
+        if not save_json(gacha_data_path, self.data):
             logger.warning("导出失败，请尝试其他方法")
             return
         logger.info("抽卡数据导出成功")
@@ -40,35 +42,62 @@ class ExportManager:
         """
         If historical data is available, it will be merged with current data
         """
+        if not settings.FLAG_AUTO_MERGE:
+            return
         history = load_json(history_path)
         if history:
             logger.info("合并历史数据")
-            self.gacha_log.data = merge_data(self.gacha_log.data, history)
-
-    def generator_report(self):
-        for generator in self.generators:
-            if not generator.status():
-                continue
-            generator.data = self.gacha_log.data
-            generator.uid = self.gacha_log.uid
-            generator.generator()
-
-    def add_generator(self, generator: AbstractGenerator):
-        self.generators.append(generator)
+            self.data = merge_data(self.data, history)
 
     def save_user_config(self):
-        config_path = Path(settings.USER_DATA_PATH, self.gacha_log.uid, "config.json")
+        config_path = Path(settings.USER_DATA_PATH, self.uid, "config.json")
         user_data = load_json(config_path)
         if not user_data:
             user_data = {}
-        user_data["uid"] = self.gacha_log.uid
-        user_data["gacha_url"] = self.gacha_log.url
+        user_data["uid"] = self.uid
+        user_data["gacha_url"] = self.url
         if not save_json(config_path, user_data):
             logger.warning("保存用户信息失败")
 
+    def generator_report(self):
+        report.data = self.data
+        report.uid = self.uid
+        report.generator_report()
 
-xlsx_generator = XLSXGenerator(None, None)
 
-export_manager = ExportManager()
+def merge():
+    """合并历史记录并生成报告（独立功能）
 
-export_manager.add_generator(xlsx_generator)
+    只扫描 ./Genshin_impact_tools/merge 目录的所有文件, 生成报告会保存到对应的 uid 目录
+    """
+    path = Path(settings.USER_DATA_PATH, "merge")
+    if not path.exists():
+        logger.warning("目录 {} 不存在\n请创建该文件夹后放入需要合并的数据文件", path)
+        return False
+    files = os.listdir(path)
+    for file in files:
+        file = Path(file)
+        if file.suffix != ".json":
+            files.remove(file)
+
+    datas = []
+    for file in files:
+        datas.append(load_json(Path(path, file)))
+    data = _merge_recursion(datas)[0]
+    save_json(Path(settings.USER_DATA_PATH, data["info"]["uid"], "gacha_data.json"), data)
+    report.data = data
+    report.uid = data["info"]["uid"]
+    report.generator_report()
+
+
+def _merge_recursion(datas: List[dict]):
+    length = len(datas)
+    if length < 2:
+        return datas
+    if length == 2:
+        return [merge_data(datas[0], datas[1])]
+
+    middle = math.floor(length/2)
+    left = _merge_recursion(datas[0:middle])
+    right = _merge_recursion(datas[middle:])
+    return _merge_recursion(left+right)
