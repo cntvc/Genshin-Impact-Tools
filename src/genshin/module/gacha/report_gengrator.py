@@ -159,7 +159,7 @@ class XLSXGenerator(AbstractGenerator):
             )
 
         workbook.close()
-        logger.info("xlsx文件写入完成")
+        logger.info("XLSX文件写入完成")
         return True
 
 

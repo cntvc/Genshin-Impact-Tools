@@ -30,7 +30,8 @@ def verify_url(url: str):
 
     if url can't access, return False
     """
-    logger.info("验证链接有效性")
+    logger.debug("验证链接有效性")
+    logger.debug(url)
     res = request_get(url)
     if not res:
         return False
@@ -45,7 +46,7 @@ def verify_url(url: str):
         else:
             logger.warning("数据为空，错误代码：" + res_json["message"])
         return False
-    logger.info("链接可用")
+    logger.debug("链接可用")
     return True
 
 

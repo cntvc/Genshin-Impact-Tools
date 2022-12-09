@@ -13,18 +13,22 @@ file_list = [
 
     src_root_dir + "config/__init__.py",
     src_root_dir + "config/global_setting.py",
+    src_root_dir + "config/user_setting.py",
     
     src_root_dir + "core/__init__.py",
     src_root_dir + "core/function.py",
     src_root_dir + "core/log.py",
 
     src_root_dir + "module/__init__.py",
-    src_root_dir + "module/gacha/__init__.py",
-    src_root_dir + "module/gacha/gacha_data_struct.py",
-    src_root_dir + "module/gacha/gacha_log.py",
-    src_root_dir + "module/gacha/gacha_url.py",
     src_root_dir + "module/clipboard.py",
     src_root_dir + "module/menu.py",
+
+    src_root_dir + "module/gacha/__init__.py",
+    src_root_dir + "module/gacha/data_struct.py",
+    src_root_dir + "module/gacha/data_transform.py",
+    src_root_dir + "module/gacha/gacha_log.py",
+    src_root_dir + "module/gacha/gacha_url.py",
+    src_root_dir + "module/gacha/report_gengrator.py",
 ]
 
 icon_path = "resource/ys.ico"
