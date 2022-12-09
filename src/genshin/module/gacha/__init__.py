@@ -68,7 +68,7 @@ class ExportManager:
 def merge():
     """合并历史记录并生成报告（独立功能）
 
-    只扫描 ./Genshin_impact_tools/merge 目录的所有文件, 生成报告会保存到对应的 uid 目录
+    默认扫描 ./Genshin_impact_tools/merge 目录的所有文件, 生成报告会保存到对应的 uid 目录
     """
     path = Path(settings.USER_DATA_PATH, "merge")
     if not path.exists():
@@ -80,18 +80,21 @@ def merge():
         if file.suffix != ".json":
             files.remove(file)
     logger.info("共扫描到 {} 个文件:", len(files))
-    logger.info(files)
+    if len(files) < 2:
+        logger.info("可合并文件数量低于2个，退出合并程序")
+        return
 
     datas = []
     for file in files:
         data = load_json(Path(path, file))
         if not varify_data(data):
-            logger.warning("文件 '{}' 中数据存在错误，此文件不会被合并")
+            logger.warning("文件 '{}' 中数据存在错误，此文件不会被合并", file)
             continue
-        datas.append(load_json(Path(path, file)))
+        datas.append(data)
 
-    logger.info("准备合并以下几个文件：\n{}\n", "".join(files))
-    logger.info("合并数据中")
+    logger.warning("准备合并以下几个文件：\n{}\n", "\t".join(files))
+
+    logger.info("合并数据中...")
     data = _merge_recursion(datas)[0]
     logger.info("合并数据完成")
     save_json(Path(settings.USER_DATA_PATH, data["info"]["uid"], "gacha_data.json"), data)

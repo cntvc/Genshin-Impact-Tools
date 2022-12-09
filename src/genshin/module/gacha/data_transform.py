@@ -80,7 +80,7 @@ def merge_data(first: dict, second: dict):
 
 def varify_data(gacha_data: dict):
     """
-    验证数据一致性
+    验证数据一致性，并添加数据信息
     """
     uid = None
     lang = None
@@ -103,7 +103,7 @@ def varify_data(gacha_data: dict):
                 return False
 
     gacha_data["info"] = generator_info(uid, lang)
-    return gacha_data["info"]
+    return True
 
 
 def generator_info(uid, lang):
