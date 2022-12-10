@@ -20,18 +20,6 @@ class AbstractGenerator(metaclass=abc.ABCMeta):
     def generator(self):
         pass
 
-    @abc.abstractmethod
-    def open(self):
-        pass
-
-    @abc.abstractmethod
-    def close(self):
-        pass
-
-    @abc.abstractmethod
-    def status(self):
-        pass
-
 
 class XLSXGenerator(AbstractGenerator):
     def __init__(self, data: Optional[dict], uid: Optional[str]) -> None:
