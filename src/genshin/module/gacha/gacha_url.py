@@ -146,7 +146,7 @@ class ConfigUrl(AbstractUrl):
             user_list.append(config)
         return user_list
 
-    def get_url(self) -> Optional[str]:
+    def get_url(self):
         """
         get gacha url from config.json
         """
@@ -158,18 +158,19 @@ class ConfigUrl(AbstractUrl):
 
         if user_count == 1:
             return user_list[0]["gacha_url"]
-
-        clear_screen()
-        print("检测到多位用户配置文件，请输入数字选择:")
-        for index, user_data in enumerate(user_list):
-            print(f"{index + 1}. {user_data['uid']}")
-        print("\n输入 0 取消导出")
+        self._show_user_list(user_list)
         index = input_int(0, len(user_list))
 
         if index == 0:
-            return None
-
+            return 0
         return user_list[index - 1]["gacha_url"]
+
+    def _show_user_list(self, users):
+        clear_screen()
+        print("检测到多位用户配置文件，请输入数字选择:")
+        for index, user_data in enumerate(users):
+            print(f"{index + 1}. {user_data['uid']}")
+        print("\n输入 0 取消导出")
 
 
 class UrlFactory:

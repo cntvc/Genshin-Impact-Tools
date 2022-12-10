@@ -22,6 +22,8 @@ class ExportManager:
     def export(self, url_source: int):
         url_product = UrlFactory.produce(url_source)
         self.url = url_product.get_url()
+        if self.url == 0:
+            return
         if not self.url or not verify_url(self.url):
             logger.warning("导出失败，请尝试其他方法")
             return

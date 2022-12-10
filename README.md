@@ -36,7 +36,7 @@
 - Win10 及以上版本无后缀， 对应文件名为 `Genshin_Impact_Tools_{version}.zip`
 - Win7 版本后缀为_win7， 对应文件名为 `Genshin_Impact_Tools_win7_{version}.zip`
 
-## 详细使用教程见 [Wiki][1]
+## 详细软件说明见 [Wiki][1]
 
 
 ---
