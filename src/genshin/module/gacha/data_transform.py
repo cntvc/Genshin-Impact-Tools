@@ -68,7 +68,7 @@ def merge_data(first: dict, second: dict):
             temp_data = [log for log in second_log if log not in first_log]
 
         first_log.extend(temp_data)
-        sorted(first_log,  key=lambda data: data["id"])
+        sorted(first_log, key=lambda data: data["id"])
         logger.debug(
             "数据合并 =====+> {} 共 {} \t条记录",
             GACHA_QUERY_TYPE_DICT[gacha_type],

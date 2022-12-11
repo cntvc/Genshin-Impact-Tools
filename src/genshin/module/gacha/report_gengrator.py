@@ -98,7 +98,7 @@ class XLSXGenerator(AbstractGenerator):
         overview_sheet.write_row(0, 0, ["项目"] + GACHA_QUERY_TYPE_NAMES, title_css)
         overview_sheet.write_column(1, 0, ["抽卡总数", "5星出货次数", "出5星平均次数", "保底内抽数"], title_css)
         END_ROW = 6
-        overview_sheet.merge_range("A{}:E{}".format(END_ROW+1, END_ROW+1), "5星详情", merge_css)
+        overview_sheet.merge_range("A{}:E{}".format(END_ROW + 1, END_ROW + 1), "5星详情", merge_css)
 
         for cnt, gacha_type_id in enumerate(GACHA_QUERY_TYPE_IDS):
             gacha_type_List = self.data["list"][gacha_type_id][:]

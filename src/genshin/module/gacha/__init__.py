@@ -112,10 +112,10 @@ def _merge_recursion(datas: List[dict]):
     if length == 2:
         return [merge_data(datas[0], datas[1])]
 
-    middle = math.floor(length/2)
+    middle = math.floor(length / 2)
     left = _merge_recursion(datas[0:middle])
     right = _merge_recursion(datas[middle:])
-    return _merge_recursion(left+right)
+    return _merge_recursion(left + right)
 
 
 export = ExportManager()

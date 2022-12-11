@@ -1,4 +1,3 @@
-
 import math
 from typing import Callable
 
@@ -23,12 +22,12 @@ class Menu:
         # 让标题打印在中间
         DEFAULT_LENGTH = 40
         description: str = self.menu["description"]
-        space_size = math.floor((DEFAULT_LENGTH - len(description))/2)
+        space_size = math.floor((DEFAULT_LENGTH - len(description)) / 2)
         print(" " * space_size + description)
         print("========================================")
         options: list = self.menu["options"]
         for index, option in enumerate(options):
-            print("{}.{}".format(index+1, option["description"]))
+            print("{}.{}".format(index + 1, option["description"]))
         print("")
         if len(self.stack) > 1:
             print("0.返回上级菜单")
@@ -51,10 +50,10 @@ class Menu:
                 continue
 
             # option : (Callable | list)
-            option = options[choice-1]["options"]
+            option = options[choice - 1]["options"]
 
             if isinstance(option, list):
-                self.stack.append(options[choice-1])
+                self.stack.append(options[choice - 1])
                 self.display()
                 self.run()
             elif isinstance(option, Callable):
@@ -71,22 +70,19 @@ menu_item = {
             "options": [
                 {
                     "description": "通过游戏缓存导出",
-                    "options": lambda: export.export(settings.URL_SOURCE_GAMECACHE)
+                    "options": lambda: export.export(settings.URL_SOURCE_GAMECACHE),
                 },
                 {
                     "description": "通过软件缓存链接导出",
-                    "options": lambda: export.export(settings.URL_SOURCE_CONFIG)
+                    "options": lambda: export.export(settings.URL_SOURCE_CONFIG),
                 },
                 {
                     "description": "通过剪切板导出",
-                    "options": lambda: export.export(settings.URL_SOURCE_CLIPBOARD)
+                    "options": lambda: export.export(settings.URL_SOURCE_CLIPBOARD),
                 },
-            ]
+            ],
         },
-        {
-            "description": "合并抽卡记录",
-            "options": lambda: merge()
-        },
+        {"description": "合并抽卡记录", "options": lambda: merge()},
         {
             "description": "软件设置",
             "options": [
@@ -95,30 +91,30 @@ menu_item = {
                     "options": [
                         {
                             "description": "打开导出XLSX文件",
-                            "options": lambda: update_generator_xlsx(settings.OPEN)
+                            "options": lambda: update_generator_xlsx(settings.OPEN),
                         },
                         {
                             "description": "关闭导出XLSX文件",
-                            "options": lambda: update_generator_xlsx(settings.CLOSE)
-                        }
-                    ]
+                            "options": lambda: update_generator_xlsx(settings.CLOSE),
+                        },
+                    ],
                 },
                 {
                     "description": "自动合并历史记录",
                     "options": [
                         {
                             "description": "打开自动合并历史记录",
-                            "options": lambda: update_auto_merge(settings.OPEN)
+                            "options": lambda: update_auto_merge(settings.OPEN),
                         },
                         {
                             "description": "关闭自动合并历史记录",
-                            "options": lambda: update_auto_merge(settings.CLOSE)
-                        }
-                    ]
+                            "options": lambda: update_auto_merge(settings.CLOSE),
+                        },
+                    ],
                 },
-            ]
-        }
-    ]
+            ],
+        },
+    ],
 }
 
 menu = Menu(menu_item)
