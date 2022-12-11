@@ -3,16 +3,24 @@
 
 ## 主要功能点：
 - [X] 抽卡记录导出（由于官方限制，只能导出最近6个月抽卡记录）    
-  - 可选的多种导出方式：剪切板、游戏缓存、配置文件
+  - 可选的多种导出方式：游戏缓存（推荐）、剪切板、配置文件
 - [X] json格式的历史记录合并(1.3版本前产生的记录尚未支持)
-- [ ] 米游社签到
-- [ ] 待开发
-
-其他特点：
 - [X] 多账户支持
-- [ ] 国际服、云原神支持
 
 软件支持的系统版本：win7，win10， win11
+
+> <details>
+>   <summary>待开发功能</summary>
+>   <p>
+> 
+> - [ ] 本地用户系统（方便处理一些代码逻辑）
+> - [ ] 国际服、云原神支持
+> - [ ] XLSX 格式的历史记录合并
+> - [ ] 生成抽卡统计报告（独立功能）
+> - [ ] 米游社签到
+> - [ ] 适配 UIGF 格式
+>   </p>
+> </details>
 
 ---
 
@@ -42,5 +50,5 @@
 ---
 本项目根据 **[genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export)** 修改而来
 
-[2]: https://github.com/cntvc/Genshin-Impact-Tools/releases/latest
 [1]: https://github.com/cntvc/Genshin-Impact-Tools/wiki
+[2]: https://github.com/cntvc/Genshin-Impact-Tools/releases/latest
