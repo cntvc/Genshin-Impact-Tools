@@ -170,10 +170,11 @@ class XLSXGenerator(AbstractGenerator):
             average_five = "-"
             if len(star_5_list):
                 average_five = (total_counter - pity_counter) / len(star_5_list)
+                average_five = round(average_five, 2)
             overview_sheet.write_column(
                 1,
                 cnt + 1,
-                [total_counter, len(star_5_list), round(average_five, 2), pity_counter],
+                [total_counter, len(star_5_list), average_five, pity_counter],
                 content_css,
             )
             overview_sheet.write_column(END_ROW + 1, cnt + 1, star_5_list)
