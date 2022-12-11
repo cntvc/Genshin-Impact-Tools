@@ -1,5 +1,5 @@
-name: 其他问题 (other questions)
-description: 其他问题 (other questions)
+name: 其他问题 (Other questions)
+description: 其他问题 (Other questions)
 body:
   - type: markdown
     attributes:

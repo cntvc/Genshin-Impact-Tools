@@ -4,8 +4,10 @@
 ## 主要功能点：
 - [X] 抽卡记录导出（由于官方限制，只能导出最近6个月抽卡记录）    
   - 可选的多种导出方式：游戏缓存（推荐）、剪切板、配置文件
-- [X] json格式的历史记录合并(1.3版本前产生的记录尚未支持)
-- [X] 多账户支持
+- [X] 历史记录合并
+  - 目前只支持json格式
+  - 不支持 1.3 版本前导出的记录
+- [X] 支持多账户使用
 
 软件支持的系统版本：win7，win10， win11
 
@@ -46,9 +48,19 @@
 
 ## 详细软件说明见 [Wiki][1]
 
+## 如何反馈软件问题
+
+在 [Issue页面][issue] 选择对应的反馈类型，并填写系统版本、运行日志等相关信息。
+
+日志文件位置：
+```text
+%USERPROFILE%\AppData\Local\Genshin-Impact-Tools\log
+```
+将上面的路径复制到文件资源管理器地址栏即可访问日志文件
 
 ---
 本项目根据 **[genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export)** 修改而来
 
 [1]: https://github.com/cntvc/Genshin-Impact-Tools/wiki
 [2]: https://github.com/cntvc/Genshin-Impact-Tools/releases/latest
+[issue]: https://github.com/cntvc/Genshin-Impact-Tools/issues/new/choose
