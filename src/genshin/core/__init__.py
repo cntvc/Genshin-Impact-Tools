@@ -1,6 +1,6 @@
 """core"""
 
-from genshin.core.log import logger
 from genshin.core.function import singleton
+from genshin.core.log import logger
 
-__all__ = ["logger"]
+__all__ = ["logger", "singleton"]

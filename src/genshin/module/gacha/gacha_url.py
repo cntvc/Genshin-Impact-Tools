@@ -10,9 +10,9 @@ from typing import Optional
 
 from genshin.config import settings
 from genshin.core import logger
-from genshin.core.function import (clear_screen, input_int, load_json,
-                                   request_get)
+from genshin.core.function import request_get
 from genshin.module.clipboard import get_clipboad_text_or_html
+from genshin.module.user import user
 
 
 def get_url_from_string(string: Optional[str]) -> Optional[str]:
@@ -57,7 +57,7 @@ class AbstractUrl(metaclass=abc.ABCMeta):
 
 
 class ClipboadUrl(AbstractUrl):
-    def get_url(self) -> Optional[str]:
+    def get_url(self):
         """
         get gacha url from clipboad
         """
@@ -70,32 +70,39 @@ class ClipboadUrl(AbstractUrl):
 
 class CacheUrl(AbstractUrl):
     def get_cache_path(self):
-        log_path = Path(settings.MIHOYO_CHAHE_PATH, "原神", "output_log.txt")
+        log_dir_name = "原神"
+        data_path = "YuanShen_Data"
+        if user.get_area() == "global":
+            log_dir_name = "Genshin Impact"
+            data_path = "YuanShen_DataGenshinImpact_Data"
+
+        log_path = Path(settings.MIHOYO_CHAHE_PATH, log_dir_name, "output_log.txt")
         try:
             log_text = log_path.read_text(encoding="utf8")
         except UnicodeDecodeError as err:
             logger.debug(f"日志文件编码不是utf8, 尝试默认编码 {err}")
             log_text = log_path.read_text(encoding=None)
 
-        res = re.search("([A-Z]:/.+(GenshinImpact_Data|YuanShen_Data))", log_text)
+        res = re.search("([A-Z]:/.+{})".format(data_path), log_text)
+
         game_path = res.group() if res else None
         if not game_path:
             logger.warning("未找到游戏路径")
-            return None
+            return ""
 
         data_2 = Path(game_path) / "webCaches/Cache/Cache_Data/data_2"
         if not data_2.is_file():
             logger.warning("缓存文件不存在")
-            return None
+            return ""
         return data_2
 
-    def get_url(self) -> Optional[str]:
+    def get_url(self):
         """
         get gacha url from game cache file
         """
         cache_file = self.get_cache_path()
         if not cache_file:
-            return None
+            return ""
         with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_file:
             tmp_file_name = tmp_file.name
         copyfile(str(cache_file), str(tmp_file_name))
@@ -118,59 +125,16 @@ class CacheUrl(AbstractUrl):
 
 
 class ConfigUrl(AbstractUrl):
-
-    user_data_dir_re = re.compile("^[0-9]{9,}$")
-
-    def get_user_list(self):
-        if not os.path.isdir(settings.USER_DATA_PATH):
-            return []
-        file_list = os.listdir(settings.USER_DATA_PATH)
-        # save folders with digit name
-        for name in file_list:
-            if os.path.isfile(name):
-                file_list.remove(name)
-            elif not ConfigUrl.user_data_dir_re.match(name):
-                file_list.remove(name)
-
-        user_list = []
-        # read config.json
-        for folder in file_list:
-            path = Path(settings.USER_DATA_PATH, folder, "config.json")
-            if not path.exists():
-                continue
-
-            config = load_json(path)
-            if not config or ("uid" not in config):
-                continue
-            logger.debug("检测到 {} 配置文件", config["uid"])
-            user_list.append(config)
-        return user_list
-
     def get_url(self):
         """
         get gacha url from config.json
         """
-        user_list = self.get_user_list()
-        user_count = len(user_list)
-        if not user_count:
-            logger.warning("未检测到有效配置文件")
-            return None
-
-        if user_count == 1:
-            return user_list[0]["gacha_url"]
-        self._show_user_list(user_list)
-        index = input_int(0, len(user_list))
-
-        if index == 0:
-            return 0
-        return user_list[index - 1]["gacha_url"]
-
-    def _show_user_list(self, users):
-        clear_screen()
-        print("检测到多位用户配置文件，请输入数字选择:")
-        for index, user_data in enumerate(users):
-            print(f"{index + 1}. {user_data['uid']}")
-        print("\n输入 0 取消导出")
+        data = {}
+        if not user.get_gacha_url():
+            data = user.load_config()
+        if not data:
+            return ""
+        return data["gacha_url"]
 
 
 class UrlFactory:

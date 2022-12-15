@@ -28,7 +28,7 @@ class Menu:
         if len(self.stack) > 1:
             print("0.返回上级菜单")
         else:
-            print("0.退出程序")
+            print("0.退出菜单")
         print("========================================")
 
     def run(self):

@@ -115,6 +115,7 @@ def request_get(url: str, timeout=settings.TIMEOUT):
         return None
     return res
 
+
 def singleton(cls):
     _instance = {}
 
