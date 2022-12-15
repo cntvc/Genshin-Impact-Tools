@@ -74,7 +74,7 @@ class CacheUrl(AbstractUrl):
         data_path = "YuanShen_Data"
         if user.get_area() == "global":
             log_dir_name = "Genshin Impact"
-            data_path = "YuanShen_DataGenshinImpact_Data"
+            data_path = "GenshinImpact_Data"
 
         log_path = Path(settings.MIHOYO_CHAHE_PATH, log_dir_name, "output_log.txt")
         assert log_path.exists(), "日志文件不存在"
