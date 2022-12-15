@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 常见问题Q&A
+    url: https://github.com/cntvc/Genshin-Impact-Tools/wiki/常见问题Q&A
+    about: 默认所有 Issues 发起者均已了解此处的内容
+  - name: 对软件有其他问题
+    url: https://github.com/cntvc/Genshin-Impact-Tools/discussions
+    about: 如果你有其他想要提问的，欢迎到讨论区发起讨论
