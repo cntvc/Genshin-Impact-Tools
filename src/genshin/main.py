@@ -1,7 +1,11 @@
+import platform
+import time
+
+from genshin import __version__ as version
 from genshin.config import settings
 from genshin.config.user_setting import update_auto_merge
+from genshin.core import logger
 from genshin.module.gacha import export, merge
-
 
 menu_item = {
     "description": "主菜单",
@@ -48,5 +52,9 @@ menu_item = {
 
 if __name__ == "__main__":
     from genshin.module.menu import Menu
+    logger.info(("start application\n"
+                "software version:{}\n"
+                "start time:{}\n"
+                "system version:{}\n"), version, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), platform.platform())
     menu = Menu(menu_item)
     menu.run()
