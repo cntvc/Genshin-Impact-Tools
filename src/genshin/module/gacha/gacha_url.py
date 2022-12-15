@@ -77,6 +77,7 @@ class CacheUrl(AbstractUrl):
             data_path = "YuanShen_DataGenshinImpact_Data"
 
         log_path = Path(settings.MIHOYO_CHAHE_PATH, log_dir_name, "output_log.txt")
+        assert log_path.exists(), "日志文件不存在"
         try:
             log_text = log_path.read_text(encoding="utf8")
         except UnicodeDecodeError as err:
@@ -86,14 +87,11 @@ class CacheUrl(AbstractUrl):
         res = re.search("([A-Z]:/.+{})".format(data_path), log_text)
 
         game_path = res.group() if res else None
-        if not game_path:
-            logger.warning("未找到游戏路径")
-            return ""
+        assert game_path, "未找到游戏路径"
 
         data_2 = Path(game_path) / "webCaches/Cache/Cache_Data/data_2"
-        if not data_2.is_file():
-            logger.warning("缓存文件不存在")
-            return ""
+        assert data_2.is_file(), "缓存文件不存在"
+
         return data_2
 
     def get_url(self):
