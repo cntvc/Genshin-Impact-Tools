@@ -2,8 +2,7 @@ import math
 from typing import Callable
 
 from genshin.config import settings
-from genshin.config.user_setting import (update_auto_merge,
-                                         update_generator_xlsx)
+from genshin.config.user_setting import update_auto_merge
 from genshin.core.function import clear_screen, input_int, pause
 from genshin.module.gacha import export, merge
 
@@ -86,19 +85,6 @@ menu_item = {
         {
             "description": "软件设置",
             "options": [
-                {
-                    "description": "导出XLSX文件",
-                    "options": [
-                        {
-                            "description": "打开导出XLSX文件",
-                            "options": lambda: update_generator_xlsx(settings.OPEN),
-                        },
-                        {
-                            "description": "关闭导出XLSX文件",
-                            "options": lambda: update_generator_xlsx(settings.CLOSE),
-                        },
-                    ],
-                },
                 {
                     "description": "自动合并历史记录",
                     "options": [
