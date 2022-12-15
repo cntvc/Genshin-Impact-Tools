@@ -1,8 +1,6 @@
 from genshin.config import update_and_save
 from genshin.core import logger
 
-__all__ = ["update_auto_merge", "update_generator_xlsx"]
-
 
 def update_auto_merge(flg: bool):
     update_and_save("FLAG_AUTO_MERGE", flg)
