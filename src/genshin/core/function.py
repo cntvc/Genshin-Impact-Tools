@@ -114,3 +114,14 @@ def request_get(url: str, timeout=settings.TIMEOUT):
         logger.error("链接请求解析出错\n{}", traceback.format_exc())
         return None
     return res
+
+
+def singleton(cls):
+    _instance = {}
+
+    def _singleton(*args, **kargs):
+        if cls not in _instance:
+            _instance[cls] = cls(*args, **kargs)
+        return _instance[cls]
+
+    return _singleton
