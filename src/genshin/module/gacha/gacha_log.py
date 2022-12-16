@@ -6,8 +6,7 @@ from urllib import parse
 
 from genshin.core import logger
 from genshin.core.function import request_get
-from genshin.module.gacha.data_struct import (GACHA_QUERY_TYPE_DICT,
-                                              GACHA_QUERY_TYPE_IDS)
+from genshin.module.gacha.data_struct import GACHA_QUERY_TYPE_DICT, GACHA_QUERY_TYPE_IDS
 from genshin.module.gacha.data_transform import generator_info
 
 

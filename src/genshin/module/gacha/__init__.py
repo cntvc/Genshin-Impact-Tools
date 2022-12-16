@@ -17,7 +17,11 @@ from genshin.module.user import user
 def export(url_source: int):
     url_product = UrlFactory.produce(url_source)
     if url_source != settings.URL_SOURCE_CLIPBOARD:
-        user.init()
+        if url_source == settings.URL_SOURCE_CONFIG:
+            # 配置文件导出，不打印新建用户选项
+            user.init(False)
+        else:
+            user.init()
         if not user.get_uid():
             logger.warning("未设置UID，无法导出")
             return
@@ -31,14 +35,18 @@ def export(url_source: int):
         return
     gacha_log = GachaLog(user.get_gacha_url())
     data, uid = gacha_log.query()
-    user.set_uid(uid)
+    if user.get_uid() != uid:
+        logger.warning("UID与预设不同，当前数据UID:{}", uid)
+        user.set_uid(uid)
 
     gacha_data_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
     if settings.FLAG_AUTO_MERGE:
         history = load_json(gacha_data_path)
         if history:
             logger.info("合并历史数据")
-            data = merge_data(data, history)
+            new_data = merge_data(data, history)
+            if not new_data:
+                data = new_data
 
     if not save_json(gacha_data_path, data):
         logger.warning("保存抽卡数据失败，请尝试其他方法")

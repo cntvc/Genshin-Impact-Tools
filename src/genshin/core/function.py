@@ -93,11 +93,11 @@ def input_int(left: int, rigth: int):
         try:
             index = int(index)
         except (TypeError, ValueError):
-            logger.warning("'{}' 为非法输入，请重试", index)
+            print_color("'{}' 为非法输入，请重试".format(index))
             continue
 
         if index > rigth or index < left:
-            logger.warning("'{}' 为非法输入，请重试", index)
+            print_color("'{}' 为非法输入，请重试".format(index))
             continue
         return index
 
@@ -125,3 +125,14 @@ def singleton(cls):
         return _instance[cls]
 
     return _singleton
+
+
+def print_color(values: str, color: str = "red"):
+    if color == "red":
+        print("\033[1;31;40m{}\033[0m".format(values))
+    elif color == "green":
+        print("\033[1;32;40m{}\033[0m".format(values))
+    elif color == "blue":
+        print("\033[1;36;40m{}\033[0m".format(values))
+    else:
+        print(values)

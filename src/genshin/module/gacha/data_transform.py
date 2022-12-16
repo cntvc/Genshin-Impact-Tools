@@ -21,6 +21,8 @@ def merge_data(first: dict, second: dict):
     """
     merge gacha log, sorted by id
 
+    if can't merge, return {}
+
     data struct:
 
     {
@@ -53,7 +55,7 @@ def merge_data(first: dict, second: dict):
     is_same_lang = first_info["lang"] == second_info["lang"]
     if not first or not second or not is_same_uid or not is_same_lang:
         logger.warning("数据信息不一致，无法合并")
-        return None
+        return {}
 
     logger.debug("开始合并数据")
     first["info"] = generator_info(first_info["uid"], first_info["lang"])

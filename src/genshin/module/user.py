@@ -4,7 +4,7 @@ from pathlib import Path
 
 from genshin.config import settings
 from genshin.core import logger, singleton
-from genshin.core.function import input_int, load_json, save_json
+from genshin.core.function import clear_screen, input_int, load_json, save_json
 
 
 @singleton
@@ -54,25 +54,28 @@ class User:
             if self.set_uid(input_uid):
                 break
 
-    def init(self):
-        """
-        扫描目录初始化uid和area
+    def init(self, create_new=True):
+        """打印可选用户列表并初始化uid
+
+        Args:
+            create_new (bool, optional): 是否包含新建用户选项. 默认包含.
         """
         user_config_list = self._get_user_list()
-        self._choose_user(user_config_list)
-
-    def _choose_user(self, user_config_list):
-        """
-        提供菜单选择用户以初始化
-        """
         length = len(user_config_list)
+        clear_screen()
+        print("             选择账户UID")
         print("========================================")
         for index in range(length):
             print("{}.{}".format(index + 1, user_config_list[index]["uid"]))
-        print("{}.{}".format(length + 1, "输入新用户"))
+        if create_new:
+            print("{}.{}".format(length + 1, "输入新用户"))
+        print("")
         print("0.退出选择")
         print("========================================")
-        choose = input_int(0, length + 1)
+        choose_range_end = length
+        if create_new:
+            choose_range_end = length + 1
+        choose = input_int(0, choose_range_end)
         if choose == 0:
             return
         elif choose == length + 1:

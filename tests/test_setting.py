@@ -2,8 +2,7 @@
 test setting module
 """
 
-from genshin.config import (_remove_dict, is_user_setting, reload_config,
-                            settings, update_config)
+from genshin.config import _remove_dict, is_user_setting, reload_config, settings, update_config
 
 
 def test_get_value():
