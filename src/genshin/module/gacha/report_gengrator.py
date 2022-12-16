@@ -7,8 +7,7 @@ from typing import List, Optional
 
 from genshin.config import settings, update_and_save
 from genshin.core import logger
-from genshin.module.gacha.data_struct import (GACHA_QUERY_TYPE_IDS,
-                                              GACHA_QUERY_TYPE_NAMES,
+from genshin.module.gacha.data_struct import (GACHA_QUERY_TYPE_IDS, GACHA_QUERY_TYPE_NAMES,
                                               GACHA_TYPE_DICT)
 
 
@@ -44,7 +43,7 @@ class XLSXGenerator(AbstractGenerator):
         return Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览.xlsx").as_posix()
 
     def generator(self):
-        logger.info("开始生成XLSX报告")
+        logger.debug("开始生成XLSX报告")
         try:
             from xlsxwriter import Workbook
         except ImportError as e:
@@ -180,7 +179,7 @@ class XLSXGenerator(AbstractGenerator):
             overview_sheet.write_column(END_ROW + 1, cnt + 1, star_5_list)
 
         workbook.close()
-        logger.info("XLSX文件写入完成")
+        logger.debug("XLSX文件写入完成")
         return True
 
 

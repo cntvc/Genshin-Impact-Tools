@@ -5,8 +5,7 @@ test url factory
 import pytest
 
 from genshin.config import settings
-from genshin.module.gacha.gacha_url import (CacheUrl, ClipboadUrl, ConfigUrl,
-                                            UrlFactory)
+from genshin.module.gacha.gacha_url import CacheUrl, ClipboadUrl, ConfigUrl, UrlFactory
 
 
 class TestUrlFactory:
