@@ -3,7 +3,7 @@ import time
 
 from genshin import __version__ as version
 from genshin.config import settings
-from genshin.config.user_setting import update_auto_merge
+from genshin.config.user_setting import set_auto_merge, set_generator_uigf
 from genshin.core import logger
 from genshin.module.gacha import export, merge
 
@@ -36,11 +36,24 @@ menu_item = {
                     "options": [
                         {
                             "description": "打开自动合并历史记录",
-                            "options": lambda: update_auto_merge(settings.OPEN),
+                            "options": lambda: set_auto_merge(settings.OPEN),
                         },
                         {
                             "description": "关闭自动合并历史记录",
-                            "options": lambda: update_auto_merge(settings.CLOSE),
+                            "options": lambda: set_auto_merge(settings.CLOSE),
+                        },
+                    ],
+                },
+                {
+                    "description": "导出UIGF格式数据",
+                    "options": [
+                        {
+                            "description": "打开导出UIGF格式数据",
+                            "options": lambda: set_generator_uigf(settings.OPEN),
+                        },
+                        {
+                            "description": "关闭导出UIGF格式数据",
+                            "options": lambda: set_generator_uigf(settings.CLOSE),
                         },
                     ],
                 },
