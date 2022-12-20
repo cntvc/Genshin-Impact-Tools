@@ -1,20 +1,19 @@
 """
-gacha_transform
+data transform
 
-json->xlsx
-xlsx->json
+- convert between gacha log and uigf
+- merge gacha log
 """
 import time
+from pathlib import Path
 
 from genshin import APP_NAME
 from genshin import __version__ as version
 from genshin.core import logger
-from genshin.module.gacha.data_struct import GACHA_QUERY_TYPE_DICT
+from genshin.core.function import load_json
+from genshin.module.gacha.metadata import GACHA_QUERY_TYPE_DICT, GACHA_QUERY_TYPE_IDS
 
-
-def load_xlsx() -> dict:
-    """load data from xlsx"""
-    pass
+UIGF_VERSION = "v2.2"
 
 
 def merge_data(first: dict, second: dict):
@@ -22,28 +21,6 @@ def merge_data(first: dict, second: dict):
     merge gacha log, sorted by id
 
     if can't merge, return {}
-
-    data struct:
-
-    {
-        "list": {
-            "100": [
-                {
-                    "uid": "",
-                    "gacha_type": "",
-                    "item_id": "",
-                    "count": "",
-                    "time": "2021-12-10 21:31:58",
-                    "name": "",
-                    "lang": "",
-                    "item_type": "",
-                    "rank_type": "",
-                    "id": ""
-                },
-                ...
-            ],
-        }
-    }
     """
 
     first_info = first["info"]
@@ -84,8 +61,8 @@ def varify_data(gacha_data: dict):
     """
     验证数据一致性，并添加数据信息
     """
-    uid = None
-    lang = None
+    uid = ""
+    lang = ""
 
     for gacha_type in GACHA_QUERY_TYPE_DICT:
         for data in gacha_data["list"][gacha_type]:
@@ -109,10 +86,131 @@ def varify_data(gacha_data: dict):
 
 
 def generator_info(uid, lang):
+    _time = time.time()
     info = {}
     info["uid"] = uid
     info["lang"] = lang
-    info["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    info["export_timestamp"] = int(_time)
+    info["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(_time))
     info["export_app"] = APP_NAME
     info["export_app_version"] = version
     return info
+
+
+def load_uigf(path: str):
+    """load UIGF from path, file suffix: [xlsx | json]
+
+    Args:
+        path (str): UIGF file path
+    Returns:
+        dict: app gacha log fromat
+    """
+    file_path = Path(path)
+    if not file_path.exists():
+        logger.warning("文件 '{}' 不存在， 无法加载UIFG数据", file_path)
+        return {}
+    file_suffix = file_path.suffix
+    if file_suffix == ".json":
+        data = _load_uigf_json(file_path)
+    elif file_suffix == ".xlsx":
+        data = _load_uigf_xlsx(file_path)
+    return _convert_to_app(data)
+
+
+def _load_uigf_xlsx(path: str):
+    """load UIGF data from path, file suffix is .xlsx
+
+    Args:
+        path (str): UIGF file path
+
+    Returns:
+        dict: UIGF data
+    """
+    # workbook = Workbook(path)
+
+
+def _load_uigf_json(path: str):
+    """load UIGF data from path, file suffix is .json
+
+    Args:
+        path (str): UIGF file path
+
+    Returns:
+        dict: UIGF data
+    """
+    return load_json(path)
+
+
+def _convert_to_app(data: dict):
+    """convert uigf to app gacha log fromat
+
+    Args:
+        data (dict): uigf data
+
+    Returns:
+        dict: app gacha log format
+    """
+    logger.debug("UIGF INFO: {}", data["info"])
+    gacha_log = {}
+    info = generator_info(data["info"]["uid"], data["info"]["lang"])
+    gacha_log["info"] = info
+    gacha_log["list"] = {}
+    for gacha_type in GACHA_QUERY_TYPE_IDS:
+        gacha_log["list"][gacha_type] = []
+    for items in data["list"]:
+        if items["gacha_type"] == "100":
+            gacha_log["list"]["100"].append(items)
+        elif items["gacha_type"] == "200":
+            gacha_log["list"]["200"].append(items)
+        elif items["gacha_type"] == "301":
+            gacha_log["list"]["301"].append(items)
+        elif items["gacha_type"] == "302":
+            gacha_log["list"]["302"].append(items)
+        elif items["gacha_type"] == "400":
+            gacha_log["list"]["301"].append(items)
+        else:
+            logger.error("格式化UIGF数据错误")
+            return {}
+    for gacha_type in GACHA_QUERY_TYPE_IDS:
+        sorted(gacha_log["list"][gacha_type], key=lambda i: i["id"])
+    return gacha_log
+
+
+def convert_to_uigf(data: dict):
+    """covert app gacha log data to UIGF format
+
+    Args:
+        data (dict): app gacha log format
+    Returns:
+        dict: UIGF data
+    """
+    uigf = {}
+    info = data["info"]
+    uigf["info"] = generator_info(info["uid"], info["lang"])
+    uigf["info"]["uigf_version"] = UIGF_VERSION
+
+    uigf["list"] = []
+
+    temp = []
+    for gacha_type in GACHA_QUERY_TYPE_IDS:
+        gacha_log = data["list"][gacha_type]
+        for gacha in gacha_log:
+            gacha["uigf_gacha_type"] = gacha_type
+        temp.extend(gacha_log)
+    temp = sorted(temp, key=lambda item: item["time"])
+
+    id = _id_generator()
+    for item in temp:
+        if item.get("id", "") == "":
+            item["id"] = next(id)
+
+    temp = sorted(temp, key=lambda item: item["id"])
+    uigf["list"] = temp
+    return uigf
+
+
+def _id_generator():
+    id = 1000000000000000000
+    while True:
+        id = id + 1
+        yield str(id)
