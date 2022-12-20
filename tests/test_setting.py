@@ -9,7 +9,7 @@ def test_get_value():
     """
     test get global setting var
     """
-    assert settings.FLAG_EXPORT_XLSX is True
+    assert settings.OPEN is True
 
 
 def test_fresh_reload():

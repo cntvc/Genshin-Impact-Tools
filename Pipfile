@@ -8,7 +8,8 @@ loguru = "*"
 dynaconf = "*"
 pywin32 = "*"
 requests = "*"
-xlsxwriter = "*"
+pandas = "*"
+openpyxl = "*"
 
 [dev-packages]
 isort = "*"

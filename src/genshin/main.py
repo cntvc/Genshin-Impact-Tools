@@ -53,7 +53,7 @@ menu_item = {
 if __name__ == "__main__":
     from genshin.module.menu import Menu
 
-    logger.info(
+    logger.debug(
         ("start application\nsoftware version:{}\nstart time:{}\nsystem version:{}\n"),
         version,
         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),

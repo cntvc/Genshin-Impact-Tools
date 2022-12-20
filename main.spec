@@ -21,12 +21,14 @@ file_list = [
 
     src_root_dir + "module/__init__.py",
     src_root_dir + "module/clipboard.py",
+    src_root_dir + "module/menu.py",
+    src_root_dir + "module/user.py",
 
     src_root_dir + "module/gacha/__init__.py",
-    src_root_dir + "module/gacha/data_struct.py",
     src_root_dir + "module/gacha/data_transform.py",
     src_root_dir + "module/gacha/gacha_log.py",
     src_root_dir + "module/gacha/gacha_url.py",
+    src_root_dir + "module/gacha/metadata.py",
     src_root_dir + "module/gacha/report_gengrator.py",
 ]
 
