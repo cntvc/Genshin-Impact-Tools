@@ -113,7 +113,6 @@ class XLSXGenerator(AbstractGenerator):
                     gacha_type_name,
                     pity_counter,
                 ]
-                # worksheet.append(excel_data)
 
                 for index_col, data in enumerate(excel_data, start=1):
                     cell = worksheet.cell(row=index_row, column=index_col, value=data)
@@ -151,7 +150,6 @@ class XLSXGenerator(AbstractGenerator):
                 cell.font = _star_5_font
 
         workbook.save(workbook_path)
-        workbook.close()
         logger.debug("XLSX文件写入完成")
         return True
 
@@ -193,7 +191,7 @@ class UIGFGenerator(AbstractGenerator):
             cell.alignment = _alignment
             cell.font = _title_font
 
-        for row, gacha_item in enumerate(self._uigf["list"], start=1):
+        for row, gacha_item in enumerate(self._uigf["list"], start=2):
             count = gacha_item.get("count", "")
             gacha_type = gacha_item.get("gacha_type", "")
             id = gacha_item.get("id", "")
@@ -223,7 +221,6 @@ class UIGFGenerator(AbstractGenerator):
                 cell.alignment = _alignment
                 cell.font = _content_font
         workbook.save(workbook_path)
-        workbook.close()
 
 
 class ReportManager:
