@@ -32,6 +32,7 @@ def export(url_source: int):
 
     if not user.get_gacha_url() or not verify_url(user.get_gacha_url()):
         logger.warning("导出失败，请尝试其他方法")
+        user.reset()
         return
     gacha_log = GachaLog(user.get_gacha_url())
     data, uid = gacha_log.query()
@@ -50,6 +51,7 @@ def export(url_source: int):
 
     if not save_json(gacha_data_path, data):
         logger.warning("保存抽卡数据失败，请尝试其他方法")
+        user.reset()
         return
     logger.info("原始抽卡数据导出成功")
     user.save_config()
@@ -108,3 +110,24 @@ def _merge_recursion(datas: List[dict]):
     left = _merge_recursion(datas[0:middle])
     right = _merge_recursion(datas[middle:])
     return _merge_recursion(left + right)
+
+
+def generator_report():
+    user.init(False)
+    if not user.get_uid():
+        logger.warning("未设置UID，无法生成报告")
+        return
+    gacha_data_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
+    if not gacha_data_path.exists():
+        logger.warning("无原始数据文件，无法生成报告")
+        user.reset()
+        return
+    gacha_data = load_json(gacha_data_path)
+    if not gacha_data:
+        logger.error("数据错误，无法生成报告")
+        user.reset()
+        return
+    report.data = gacha_data
+    report.uid = user.get_uid()
+    report.generator_report()
+    user.reset()

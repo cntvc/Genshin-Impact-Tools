@@ -5,7 +5,7 @@ from genshin import __version__ as version
 from genshin.config import settings
 from genshin.config.user_setting import set_auto_merge, set_generator_uigf
 from genshin.core import logger
-from genshin.module.gacha import export, merge
+from genshin.module.gacha import export, generator_report, merge
 
 menu_item = {
     "description": "主菜单",
@@ -28,6 +28,7 @@ menu_item = {
             ],
         },
         {"description": "合并抽卡记录", "options": lambda: merge()},
+        {"description": "生成抽卡报告", "options": lambda: generator_report()},
         {
             "description": "软件设置",
             "options": [
