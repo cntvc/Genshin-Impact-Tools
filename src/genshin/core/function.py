@@ -30,10 +30,7 @@ def save_json(full_path: str, data):
     try:
         with open(full_path, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, sort_keys=False, indent=4)
-    except IOError as err:
-        logger.error("{}\n{}", err, full_path)
-        return False
-    except json.JSONDecodeError as err:
+    except (IOError, json.JSONDecodeError) as err:
         logger.error("{}\n{}", err, full_path)
         return False
     return True
@@ -49,10 +46,7 @@ def load_json(full_path: str):
         with open(full_path, "r", encoding="UTF-8") as file:
             data = json.load(file)
             return data
-    except IOError as err:
-        logger.error("{}\n{}", err, full_path)
-        return None
-    except json.JSONDecodeError as err:
+    except (IOError, json.JSONDecodeError) as err:
         logger.error("{}\n{}", err, full_path)
         return None
 
@@ -65,10 +59,7 @@ def save_data(full_path: str, data):
     try:
         with open(full_path, "w", encoding="utf-8") as file:
             file.write(data)
-    except IOError as err:
-        logger.error("{}\n{}", err, full_path)
-        return False
-    except ValueError as err:
+    except (IOError, ValueError) as err:
         logger.error("{}\n{}", err, full_path)
         return False
     return True
