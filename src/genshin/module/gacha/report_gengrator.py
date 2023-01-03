@@ -46,7 +46,7 @@ class XLSXGenerator(AbstractGenerator):
 
     def generator(self):
         logger.debug("开始生成XLSX报告")
-        workbook_path = Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览.xlsx").as_posix()
+        workbook_path = Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览-{}.xlsx".format(self.uid))
         workbook = Workbook()
 
         statistical_sheet = workbook.active
@@ -161,7 +161,7 @@ class UIGFGenerator(AbstractGenerator):
 
     def generator(self):
         self._uigf = convert_to_uigf(self.data)
-        path = Path(settings.USER_DATA_PATH, self.uid, "gacha_data_uigf.json")
+        path = Path(settings.USER_DATA_PATH, self.uid, "gacha_data_uigf-{}.json".format(self.uid))
         if not save_json(path, self._uigf):
             logger.error("保存UIGF格式失败")
         self._uigf_to_xlsx()
@@ -170,8 +170,11 @@ class UIGFGenerator(AbstractGenerator):
         return settings.FLAG_GENERATOR_UIGF
 
     def _uigf_to_xlsx(self):
-        workbook_path = Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览.xlsx").as_posix()
-        workbook = load_workbook(workbook_path)
+        workbook_path = Path(settings.USER_DATA_PATH, self.uid, "抽卡数据总览-{}.xlsx".format(self.uid))
+        if not workbook_path.exists():
+            logger.error("导出UIGF格式到XLSX文件失败")
+            return
+        workbook = load_workbook(workbook_path.as_posix())
         worksheet = workbook.create_sheet("原始数据")
         header = [
             "count",
@@ -220,7 +223,7 @@ class UIGFGenerator(AbstractGenerator):
                 cell = worksheet.cell(row=row, column=col, value=data)
                 cell.alignment = _alignment
                 cell.font = _content_font
-        workbook.save(workbook_path)
+        workbook.save(workbook_path.as_posix())
 
 
 class ReportManager:

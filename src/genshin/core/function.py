@@ -127,3 +127,21 @@ def print_color(values: str, color: str = "red"):
         print("\033[1;36;40m{}\033[0m".format(values))
     else:
         print(values)
+
+
+def dedupe(items, key=None):
+    """Eliminate duplicate elements and keep order
+
+    Args:
+        items (iterable)
+        key (function, optional): Convert sequence elements to hashable type. Defaults to None.
+
+    Yields:
+        _type_: sequence item
+    """
+    seen = set()
+    for item in items:
+        val = item if key is None else key(item)
+        if val not in seen:
+            yield item
+            seen.add(val)

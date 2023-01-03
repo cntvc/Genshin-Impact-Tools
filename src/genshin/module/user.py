@@ -33,7 +33,7 @@ class User:
         user_list = []
         # read config.json
         for folder in file_list:
-            path = Path(settings.USER_DATA_PATH, folder, "config.json")
+            path = Path(settings.USER_DATA_PATH, folder, "config-{}.json".format(folder))
             if not path.exists():
                 continue
 
@@ -130,7 +130,7 @@ class User:
         if not self._uid:
             logger.warning("UID为空，缓存用户信息失败")
             return False
-        config_path = Path(settings.USER_DATA_PATH, self._uid, "config.json")
+        config_path = Path(settings.USER_DATA_PATH, self._uid, "config-{}.json".format(self._uid))
         user_data = load_json(config_path)
         if not user_data:
             user_data = {}
@@ -143,7 +143,7 @@ class User:
         return True
 
     def load_config(self):
-        config_path = Path(settings.USER_DATA_PATH, self._uid, "config.json")
+        config_path = Path(settings.USER_DATA_PATH, self._uid, "config-{}.json".format(self._uid))
         if not config_path.exists():
             return {}
         return load_json(config_path)

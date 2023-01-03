@@ -5,61 +5,53 @@ data transform
 - merge gacha log
 """
 import time
+from operator import itemgetter
 from pathlib import Path
+from typing import List
+
+from openpyxl import load_workbook
 
 from genshin import APP_NAME
 from genshin import __version__ as version
 from genshin.core import logger
-from genshin.core.function import load_json
+from genshin.core.function import dedupe, load_json
 from genshin.module.gacha.metadata import GACHA_QUERY_TYPE_DICT, GACHA_QUERY_TYPE_IDS
 
 UIGF_VERSION = "v2.2"
 
 
-def merge_data(first: dict, second: dict):
+def merge_data(datas: List[dict]):
+    """merge gacha data list
+
+    Args:
+        datas (List[dict]): gacha data list
+
+    Returns:
+        dict
     """
-    merge gacha log, sorted by id
-
-    if can't merge, return {}
-    """
-
-    first_info = first["info"]
-    second_info = second["info"]
-    logger.debug(first_info)
-    logger.debug(second_info)
-
-    is_same_uid = first_info["uid"] == second_info["uid"]
-    is_same_lang = first_info["lang"] == second_info["lang"]
-    if not first or not second or not is_same_uid or not is_same_lang:
-        logger.warning("数据信息不一致，无法合并")
-        return {}
-
-    logger.debug("开始合并数据")
-    first["info"] = generator_info(first_info["uid"], first_info["lang"])
-
+    gacha_type_data = {}
     for gacha_type in GACHA_QUERY_TYPE_DICT:
-        second_log = second["list"][gacha_type]
-        first_log = first["list"][gacha_type]
-
-        temp_data = []
-        if second_log:
-            # get second not in first
-            temp_data = [log for log in second_log if log not in first_log]
-
-        first_log.extend(temp_data)
-        first["list"][gacha_type] = sorted(first_log, key=lambda data: data["id"])
-        logger.debug(
-            "数据合并 =====+> {} 共 {} \t条记录",
-            GACHA_QUERY_TYPE_DICT[gacha_type],
-            len(first_log),
-        )
-    logger.debug("数据合并完成")
-    return first
+        gacha_type_data[gacha_type] = []
+    for data in datas:
+        for gacha_type in GACHA_QUERY_TYPE_DICT:
+            gacha_type_data[gacha_type].extend(data["list"][gacha_type])
+    for gacha_type in GACHA_QUERY_TYPE_DICT:
+        gacha_type_data[gacha_type] = list(dedupe(gacha_type_data[gacha_type], lambda x: x["id"]))
+        gacha_type_data[gacha_type] = sorted(gacha_type_data[gacha_type], key=itemgetter("id"))
+    gacha_data = {}
+    gacha_data["info"] = generator_info(datas[0]["info"]["uid"], datas[0]["info"]["lang"])
+    gacha_data["list"] = gacha_type_data
+    return gacha_data
 
 
 def varify_data(gacha_data: dict):
-    """
-    验证数据一致性，并添加数据信息
+    """Verify data consistency and add info
+
+    Args:
+        gacha_data (dict)
+
+    Returns:
+        bool: Returns True on success
     """
     uid = ""
     lang = ""
@@ -72,14 +64,10 @@ def varify_data(gacha_data: dict):
             if not uid:
                 uid = data["uid"]
             elif uid != data["uid"]:
-                logger.warning("数据中存在不同用户抽卡记录")
                 return False
 
             if not lang:
                 lang = data["lang"]
-            elif lang != data["lang"]:
-                logger.warning("数据中存在不同语言抽卡记录")
-                return False
 
     gacha_data["info"] = generator_info(uid, lang)
     return True
@@ -97,14 +85,15 @@ def generator_info(uid, lang):
     return info
 
 
-def load_uigf(path: str):
+def load_gacha_data(path: str):
     """load UIGF from path, file suffix: [xlsx | json]
 
     Args:
         path (str): UIGF file path
     Returns:
-        dict: app gacha log fromat
+        dict: app gacha log fromat or {}
     """
+    # TODO 加载其他数据返回 {}
     file_path = Path(path)
     if not file_path.exists():
         logger.warning("文件 '{}' 不存在， 无法加载UIFG数据", file_path)
@@ -114,7 +103,10 @@ def load_uigf(path: str):
         data = _load_uigf_json(file_path)
     elif file_suffix == ".xlsx":
         data = _load_uigf_xlsx(file_path)
-    return _convert_to_app(data)
+    data = _convert_to_app(data)
+    if not data:
+        logger.error("文件 '{}' 数据读取失败，请检查文件格式类型", path)
+    return data
 
 
 def _load_uigf_xlsx(path: str):
@@ -126,7 +118,18 @@ def _load_uigf_xlsx(path: str):
     Returns:
         dict: UIGF data
     """
-    # workbook = Workbook(path)
+    workbook = load_workbook(path, read_only=True)
+    worksheet = workbook["原始数据"]
+    rows = list(worksheet.rows)
+    titles = [title.value for title in rows.pop(0)]
+    gacha_data = {}
+    gacha_data["list"] = []
+    for row in rows:
+        the_row_data = [cell.value for cell in row]
+        the_row_data = ["" if x is None else x for x in the_row_data]
+        gacha_data["list"].append(dict(zip(titles, the_row_data)))
+    workbook.close()
+    return gacha_data
 
 
 def _load_uigf_json(path: str):
@@ -150,10 +153,13 @@ def _convert_to_app(data: dict):
     Returns:
         dict: app gacha log format
     """
-    logger.debug("UIGF INFO: {}", data["info"])
+
+    # app自有格式直接返回
+    if isinstance(data["list"], dict):
+        return data
+    if not isinstance(data["list"], list):
+        return {}
     gacha_log = {}
-    info = generator_info(data["info"]["uid"], data["info"]["lang"])
-    gacha_log["info"] = info
     gacha_log["list"] = {}
     for gacha_type in GACHA_QUERY_TYPE_IDS:
         gacha_log["list"][gacha_type] = []
@@ -169,10 +175,12 @@ def _convert_to_app(data: dict):
         elif items["gacha_type"] == "400":
             gacha_log["list"]["301"].append(items)
         else:
-            logger.error("格式化UIGF数据错误")
+            logger.error("转换为UIGF格式失败")
             return {}
+    if not varify_data(gacha_log):
+        return {}
     for gacha_type in GACHA_QUERY_TYPE_IDS:
-        sorted(gacha_log["list"][gacha_type], key=lambda i: i["id"])
+        sorted(gacha_log["list"][gacha_type], key=itemgetter("id"))
     return gacha_log
 
 
@@ -197,14 +205,14 @@ def convert_to_uigf(data: dict):
         for gacha in gacha_log:
             gacha["uigf_gacha_type"] = gacha_type
         temp.extend(gacha_log)
-    temp = sorted(temp, key=lambda item: item["time"])
+    temp = sorted(temp, key=itemgetter("time"))
 
     id = _id_generator()
     for item in temp:
         if item.get("id", "") == "":
             item["id"] = next(id)
 
-    temp = sorted(temp, key=lambda item: item["id"])
+    temp = sorted(temp, key=itemgetter("id"))
     uigf["list"] = temp
     return uigf
 
