@@ -76,7 +76,6 @@ def merge():
         return
     logger.info("共扫描到 {} 个可合并文件", len(files))
 
-    uid = ""
     datas = []
     for file in files:
         data = load_gacha_data(Path(path, file))
@@ -85,26 +84,28 @@ def merge():
             continue
 
         # 校验数据，存在不同用户的数据，打印并退出合并
-        if not uid:
-            uid = data["info"]["uid"]
-        elif uid != data["info"]["uid"]:
+        if not user.get_uid():
+            user.set_uid(data["info"]["uid"])
+        elif user.get_uid() != data["info"]["uid"]:
             logger.warning("数据中存在不同用户抽卡记录，无法继续合并，请检查数据文件后重试")
+            user.reset()
             return
         datas.append(data)
 
     logger.info("合并数据中...")
     data = merge_data(datas)
-    user_gacha_path = Path(settings.USER_DATA_PATH, uid, "gacha_data.json")
+    user_gacha_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
     history_data = load_json(user_gacha_path)
     # 如果有原数据，则与原数据合并
     if history_data:
         data = merge_data([data, history_data])
     logger.info("合并数据完成")
     save_json(user_gacha_path, data)
-
+    user.save_config()
     report.data = data
     report.uid = data["info"]["uid"]
     report.generator_report()
+    user.reset()
 
 
 def generator_report():
