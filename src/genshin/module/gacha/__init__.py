@@ -38,7 +38,9 @@ def export(url_source: int):
         logger.warning("UID与预设不同，当前数据UID:{}", uid)
         user.set_uid(uid)
 
-    gacha_data_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
+    gacha_data_path = Path(
+        settings.USER_DATA_PATH, user.get_uid(), "gacha_data-{}.json".format(user.get_uid())
+    )
     if settings.FLAG_AUTO_MERGE:
         history = load_json(gacha_data_path)
         if history:
@@ -94,7 +96,9 @@ def merge():
 
     logger.info("合并数据中...")
     data = merge_data(datas)
-    user_gacha_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
+    user_gacha_path = Path(
+        settings.USER_DATA_PATH, user.get_uid(), "gacha_data-{}.json".format(user.get_uid())
+    )
     history_data = load_json(user_gacha_path)
     # 如果有原数据，则与原数据合并
     if history_data:
@@ -113,7 +117,9 @@ def generator_report():
     if not user.get_uid():
         logger.warning("未设置UID，无法生成报告")
         return
-    gacha_data_path = Path(settings.USER_DATA_PATH, user.get_uid(), "gacha_data.json")
+    gacha_data_path = Path(
+        settings.USER_DATA_PATH, user.get_uid(), "gacha_data-{}.json".format(user.get_uid())
+    )
     if not gacha_data_path.exists():
         logger.warning("无原始数据文件，无法生成报告")
         user.reset()
