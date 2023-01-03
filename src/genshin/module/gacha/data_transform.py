@@ -42,11 +42,11 @@ def merge_data(first: dict, second: dict):
     for gacha_type in GACHA_QUERY_TYPE_DICT:
         second_log = second["list"][gacha_type]
         first_log = first["list"][gacha_type]
-
+        first_ids = [x["id"] for x in first_log]
         temp_data = []
         if second_log:
             # get second not in first
-            temp_data = [log for log in second_log if log not in first_log]
+            temp_data = [log for log in second_log if log["id"] not in first_ids]
 
         first_log.extend(temp_data)
         first["list"][gacha_type] = sorted(first_log, key=lambda data: data["id"])
