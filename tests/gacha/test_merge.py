@@ -7,7 +7,7 @@ from genshin.module.gacha import merge
 
 def test_merge():
     merge()
-    path = Path(settings.USER_DATA_PATH, "123456788", "gacha_data.json")
+    path = Path(settings.USER_DATA_PATH, "123456788", "gacha_data-123456788.json")
     assert path.exists()
     data = load_json(path)
     assert len(data["list"]["100"]) == 2
