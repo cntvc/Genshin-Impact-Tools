@@ -1,9 +1,12 @@
 # Created by .ignore support plugin (hsz.mobi)
 
-### genshin
-# user data dir
+### Genshin
+# User data
 Genshin_Impact_tools
-test_root_dir
+
+# Test
+tests/test_root_dir/*
+!tests/test_root_dir/merge/
 
 ### Windows template
 # Windows thumbnail cache files
