@@ -139,6 +139,7 @@ def _load_uigf_xlsx(path: str):
     gacha_data["list"] = []
     for row in rows:
         the_row_data = [cell.value for cell in row]
+        the_row_data = ["" if x is None else x for x in the_row_data]
         gacha_data["list"].append(dict(zip(titles, the_row_data)))
     workbook.close()
     return gacha_data
