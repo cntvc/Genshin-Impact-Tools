@@ -7,6 +7,8 @@ data transform
 import time
 from pathlib import Path
 
+from openpyxl import load_workbook
+
 from genshin import APP_NAME
 from genshin import __version__ as version
 from genshin.core import logger
@@ -97,13 +99,13 @@ def generator_info(uid, lang):
     return info
 
 
-def load_uigf(path: str):
+def load_gacha_data(path: str):
     """load UIGF from path, file suffix: [xlsx | json]
 
     Args:
         path (str): UIGF file path
     Returns:
-        dict: app gacha log fromat
+        dict: app gacha log fromat or {}
     """
     file_path = Path(path)
     if not file_path.exists():
@@ -114,7 +116,10 @@ def load_uigf(path: str):
         data = _load_uigf_json(file_path)
     elif file_suffix == ".xlsx":
         data = _load_uigf_xlsx(file_path)
-    return _convert_to_app(data)
+    data = _convert_to_app(data)
+    if not data:
+        logger.error("文件 '{}' 数据读取失败，请检查文件格式类型", path)
+    return data
 
 
 def _load_uigf_xlsx(path: str):
@@ -126,7 +131,17 @@ def _load_uigf_xlsx(path: str):
     Returns:
         dict: UIGF data
     """
-    # workbook = Workbook(path)
+    workbook = load_workbook(path, read_only=True)
+    worksheet = workbook["原始数据"]
+    rows = list(worksheet.rows)
+    titles = [title.value for title in rows.pop(0)]
+    gacha_data = {}
+    gacha_data["list"] = []
+    for row in rows:
+        the_row_data = [cell.value for cell in row]
+        gacha_data["list"].append(dict(zip(titles, the_row_data)))
+    workbook.close()
+    return gacha_data
 
 
 def _load_uigf_json(path: str):
@@ -150,10 +165,13 @@ def _convert_to_app(data: dict):
     Returns:
         dict: app gacha log format
     """
-    logger.debug("UIGF INFO: {}", data["info"])
+
+    # app自有格式直接返回
+    if isinstance(data["list"], dict):
+        return data
+    if not isinstance(data["list"], list):
+        return {}
     gacha_log = {}
-    info = generator_info(data["info"]["uid"], data["info"]["lang"])
-    gacha_log["info"] = info
     gacha_log["list"] = {}
     for gacha_type in GACHA_QUERY_TYPE_IDS:
         gacha_log["list"][gacha_type] = []
@@ -169,8 +187,10 @@ def _convert_to_app(data: dict):
         elif items["gacha_type"] == "400":
             gacha_log["list"]["301"].append(items)
         else:
-            logger.error("格式化UIGF数据错误")
+            logger.error("转换为UIGF格式失败")
             return {}
+    if not varify_data(gacha_log):
+        return {}
     for gacha_type in GACHA_QUERY_TYPE_IDS:
         sorted(gacha_log["list"][gacha_type], key=lambda i: i["id"])
     return gacha_log
