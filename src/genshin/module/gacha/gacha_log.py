@@ -32,7 +32,9 @@ class GachaLog:
         uid_flg = False
         for gacha_type_id in GACHA_QUERY_TYPE_IDS:
             gacha_log = self._query_by_type_id(gacha_type_id)
-
+            if gacha_log is False:
+                logger.warning("抽空记录查询失败")
+                return (None, None)
             # 抽卡记录以时间顺序排列
             gacha_log.reverse()
             self.data["list"][gacha_type_id] = gacha_log
@@ -63,6 +65,8 @@ class GachaLog:
             api = self._set_url_param(gacha_type_id, max_size, page, end_id)
 
             res = request_get(api)
+            if not res:
+                return False
             res_json = json.loads(res)
             gacha = res_json["data"]["list"]
             if not gacha:
