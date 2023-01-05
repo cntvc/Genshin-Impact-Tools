@@ -16,9 +16,9 @@ def test_fresh_reload():
     """
     test fresh reload setting var from source
     """
-    settings.update(FLAG_CHECK_UPDATE=False)
-    assert settings.FLAG_CHECK_UPDATE is False
-    assert reload_config("FLAG_CHECK_UPDATE") is True
+    settings.update(FLAG_CHECK_UPDATE=True)
+    assert settings.FLAG_CHECK_UPDATE is True
+    assert reload_config("FLAG_CHECK_UPDATE") is False
 
 
 def test_remove_dict():

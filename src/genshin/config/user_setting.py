@@ -16,3 +16,11 @@ def set_generator_uigf(flg: bool):
     if flg:
         msg = "打开"
     logger.info("生成UIGF通用格式数据已{}", msg)
+
+
+def set_check_update(flg: bool):
+    update_and_save("FLAG_CHECK_UPDATE", flg)
+    msg = "关闭"
+    if flg:
+        msg = "打开"
+    logger.info("软件更新检测已{}", msg)

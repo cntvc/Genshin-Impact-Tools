@@ -3,8 +3,9 @@ import time
 
 from genshin import __version__ as version
 from genshin.config import settings
-from genshin.config.user_setting import set_auto_merge, set_generator_uigf
+from genshin.config.user_setting import set_auto_merge, set_check_update, set_generator_uigf
 from genshin.core import logger
+from genshin.core.function import clear_screen, pause
 from genshin.module.gacha import export, generator_report, merge
 
 menu_item = {
@@ -58,6 +59,19 @@ menu_item = {
                         },
                     ],
                 },
+                {
+                    "description": "设置软件更新检测",
+                    "options": [
+                        {
+                            "description": "打开软件更新检测",
+                            "options": lambda: set_check_update(settings.OPEN),
+                        },
+                        {
+                            "description": "关闭软件更新检测",
+                            "options": lambda: set_check_update(settings.CLOSE),
+                        },
+                    ],
+                },
             ],
         },
     ],
@@ -73,6 +87,14 @@ def run():
         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         platform.platform(),
     )
+
+    if settings.FLAG_CHECK_UPDATE:
+        from genshin.module import update
+
+        if not update.check_update():
+            pause()
+        clear_screen()
+
     menu = Menu(menu_item)
     menu.run()
 
