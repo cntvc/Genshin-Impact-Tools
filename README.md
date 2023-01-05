@@ -57,6 +57,11 @@
 - 其他问题请到[讨论区][discussions]进行讨论。
 
 
+## 代码规范和贡献指南
+
+参阅 [CONTRIBUTING.md][CONTRIBUTING]
+
+
 ---
 本项目根据 **[genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export)** 修改而来
 
@@ -66,3 +71,4 @@
 [report]: https://github.com/cntvc/Genshin-Impact-Tools/wiki/image/statistics.png
 [uigf]: https://uigf.org/
 [discussions]: https://github.com/cntvc/Genshin-Impact-Tools/discussions
+[CONTRIBUTING]: .github/CONTRIBUTING.md
