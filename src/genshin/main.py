@@ -91,8 +91,8 @@ def run():
     if settings.FLAG_CHECK_UPDATE:
         from genshin.module import update
 
-        update.check_update()
-        pause()
+        if not update.check_update():
+            pause()
         clear_screen()
 
     menu = Menu(menu_item)

@@ -29,10 +29,12 @@ def check_update():
     tag = get_latest_tag(GITHUB_RELEASE_URL)
     if not tag:
         logger.warning("检测更新失败\n")
-        return
+        return False
     if tag != version:
         clear_screen()
         logger.info("软件有新版本，可前往以下链接下载最新版本")
         logger.info(GITHUB_RELEASE_URL)
+        return False
     else:
         logger.info("软件已是最新版本\n")
+        return True
