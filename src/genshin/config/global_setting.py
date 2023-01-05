@@ -52,7 +52,7 @@ URL_SOURCE_GAMECACHE = 3
 USER_DATA_PATH = APP_RUN_PATH + "/Genshin_Impact_tools"
 
 # Check update application
-FLAG_CHECK_UPDATE = True
+FLAG_CHECK_UPDATE = False
 
 # auto merge history data
 FLAG_AUTO_MERGE = True
