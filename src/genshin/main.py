@@ -64,7 +64,7 @@ menu_item = {
 }
 
 
-if __name__ == "__main__":
+def run():
     from genshin.module.menu import Menu
 
     logger.debug(
@@ -75,3 +75,7 @@ if __name__ == "__main__":
     )
     menu = Menu(menu_item)
     menu.run()
+
+
+if __name__ == "__main__":
+    run()
