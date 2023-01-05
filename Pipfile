@@ -16,6 +16,8 @@ pytest = "*"
 pyinstaller = "*"
 genshin = {editable = true, path = "."}
 flake8 = "*"
+pytest-mock = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"
