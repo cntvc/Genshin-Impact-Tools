@@ -34,6 +34,8 @@ def export(url_source: int):
         return
     gacha_log = GachaLog(user.get_gacha_url())
     data, uid = gacha_log.query()
+    if not data and not uid:
+        return
     if user.get_uid() != uid:
         logger.warning("UID与预设不同，当前数据UID:{}", uid)
         user.set_uid(uid)

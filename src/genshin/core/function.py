@@ -95,15 +95,17 @@ def input_int(left: int, rigth: int):
 
 def request_get(url: str, timeout=settings.TIMEOUT):
     if not url:
-        return None
+        return {}
     try:
         res = requests.get(url, timeout=timeout).content.decode("utf-8")
-    except Timeout:
+    except Timeout as err:
         logger.warning("链接请求超时, 请检查网络连接状态")
-        return None
-    except RequestException:
+        logger.debug(err)
+        return {}
+    except RequestException as err:
         logger.error("链接请求解析出错\n{}", traceback.format_exc())
-        return None
+        logger.debug(err)
+        return {}
     return res
 
 
