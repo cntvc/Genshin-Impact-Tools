@@ -5,6 +5,23 @@ from genshin.core.function import clear_screen, input_int, pause
 
 
 class Menu:
+    """
+    Menu item eg:
+    {
+        "description": "main menu",
+        "options": [
+            {
+                "description": "sub_menu_1",
+                "options": [],
+            },
+            {
+                "description": "sub_menu_2",
+                "options": lambda: func_3(),
+            },
+        ]
+    }
+    """
+
     def __init__(self, menu: dict) -> None:
         self.menu = menu
         self.stack = []
