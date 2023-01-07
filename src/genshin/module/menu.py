@@ -37,7 +37,7 @@ class Menu:
         description: str = self.menu["description"]
         space_size = math.floor((DEFAULT_LENGTH - len(description)) / 2)
         print(" " * space_size + description)
-        print("========================================")
+        print("=" * DEFAULT_LENGTH)
         options: list = self.menu["options"]
         for index, option in enumerate(options):
             print("{}.{}".format(index + 1, option["description"]))
@@ -46,7 +46,7 @@ class Menu:
             print("0.返回上级菜单")
         else:
             print("0.退出菜单")
-        print("========================================")
+        print("=" * DEFAULT_LENGTH)
 
     def run(self):
         while self.stack:
