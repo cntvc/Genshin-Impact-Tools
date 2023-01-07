@@ -9,13 +9,15 @@
 
 <!--
 添加其中一个类别：
-Add one of the following kinds:
+Add one of the following types:
 
-/kind bug
-/kind cleanup
-/kind documentation
-/kind feature
-/kind improvement
+type: bug
+type: docs
+type: feature
+type: infrastructure
+type: performance
+type: refactoring
+type: test
 -->
 
 ### What this PR does / why we need it:
