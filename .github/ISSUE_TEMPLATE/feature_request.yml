@@ -1,33 +1,44 @@
-name: 新特性建议 (Feature Request)
-description: 提交新特性建议 (File a feature request)
+name: 功能建议 (Feature Request)
+description: 提交功能建议 (File a feature request)
+labels: ["type: feature"]
+assignees:
+  - cntvc
 body:
   - type: markdown
     attributes:
       value: |
         感谢你花时间填写此报告！在开始之前，我们非常推荐阅读一遍[《开源最佳实践》](https://github.com/LinuxSuRen/open-source-best-practice)，这会在很大程度上提高我们彼此的效率。
         Thanks for taking the time to fill out this report! 
+
   - type: markdown
     attributes:
       value: "## 环境信息 ( Environment)"
+
   - type: input
     id: app-version
     validations:
       required: true
     attributes:
       label: 你当前使用的软件版本 (The software version you are currently using)
+
   - type: markdown
     attributes:
       value: "## 详细信息 (Details)"
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景与动机 (Background and motivation)
+      description: 添加此功能的理由 (Reason for adding this feature)
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
-      label: 描述一下此特性 (Describe the feature)
+      label: 描述一下此功能或优化点 (Describe the feature)
+      description: |
+        详细的阐述你的想法，可以提供截图，视频等信息
+        Explain your ideas in detail, you can provide screenshots, videos and other information
     validations:
       required: true
-  - type: textarea
-    id: additional-information
-    attributes:
-      label: 附加信息 (Additional information)
-      description: |
-        如果你还有其他需要提供的信息，可以在这里填写（可以提供截图、视频等）。
-        If you have other information to note, you can fill it in here (screenshots, videos, etc.).

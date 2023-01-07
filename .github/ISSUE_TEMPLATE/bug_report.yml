@@ -1,6 +1,8 @@
 name: Bug 反馈 (Bug Report)
 description: 提交 Bug 反馈 (Bug Report)
-labels: [bug]
+labels: ["type: bug"]
+assignees:
+  - cntvc
 body:
   - type: markdown
     attributes:
