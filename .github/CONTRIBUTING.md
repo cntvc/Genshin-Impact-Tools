@@ -35,7 +35,7 @@ git checkout -b {BRANCH_NAME}
 
 ## 4. 编写代码和测试用例后进行代码测试
 
-按照下列命令依次格式化你的代码，并根据 flake8 的修改意见进行修改，在无任何问题后可进行 PR
+代码格式请遵循 [PEP8][pep-8]，提交前请按照下列命令依次格式化你的代码，并根据 flake8 的修改意见进行修改，在无任何问题后再进行 PR
 
 ```shell
 black --line-length=100 src tests
@@ -70,13 +70,11 @@ git pull upstream main
 git push
 ```
 
-# 代码风格、格式规范
 
-代码风格遵循 [Google python style guide](https://google.github.io/styleguide/pyguide.html)（[中文版](https://google-styleguide.readthedocs.io/zh_CN/latest/google-python-styleguide/contents.html)）
+# 代码风格
 
-代码格式请遵循 [PEP8]，可以用自动格式化工具，如 `black`
+代码风格遵循 [Google python style guide][google-style-guide]（[中文版][google-style-guide-cn]）
 
-请务必严格遵循该规范，特别是命名、空格的正确使用。在提交前，会自动运行代码检查工具，检查代码中存在的格式问题。
 
 # 提交规范
 
@@ -86,7 +84,7 @@ git push
 
 ## 提交内容
 
-确保提交的粒度足够小，比如如果同时修复了一个 bug 和增加了一个新功能，应该拆开为两次提交和 PR 。
+确保提交的粒度足够小，比如如果同时修复了一个 bug 和增加了一个新功能，应该拆开为两次提交并分别进行 PR 。
 
 如果你有破坏性修改（修改方法名、增加方法必需参数等），请在提交信息中的尾注部分写上 `BREAKING CHANGE: 说明`。例如：
 
@@ -110,3 +108,6 @@ fix!: 给 method() 增加了一个必需参数
 
 [issues]: https://github.com/cntvc/Genshin-Impact-Tools/issues
 [pipenv]: https://pipenv.pypa.io/en/latest/
+[google-style-guide]: https://google.github.io/styleguide/pyguide.html
+[google-style-guide-cn]: https://google-styleguide.readthedocs.io/zh_CN/latest/google-python-styleguide/contents.html
+[pep-8]: https://peps.python.org/pep-0008/
