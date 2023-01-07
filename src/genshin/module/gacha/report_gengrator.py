@@ -51,30 +51,34 @@ class XLSXGenerator(AbstractGenerator):
 
         statistical_sheet = workbook.active
         statistical_sheet.title = "数据总览"
-        statistical_sheet.column_dimensions["A"].width = 16
-        statistical_sheet.column_dimensions["E"].width = 16
-        statistical_sheet.column_dimensions["I"].width = 16
-        statistical_sheet.column_dimensions["J"].width = 16
-        statistical_sheet.column_dimensions["K"].width = 16
-        statistical_sheet.column_dimensions["L"].width = 16
 
-        start_col = 8
-        # 列标题-卡池名
+        # 数据统计-列标题-卡池名
         for index_head_col, name in enumerate(["项目"] + GACHA_QUERY_TYPE_NAMES, start=1):
             cell = statistical_sheet.cell(row=1, column=index_head_col, value=name)
             cell.alignment = _alignment
             cell.font = _title_font
-        # 列标题-5星详情
-        for index_head_col, name in enumerate(GACHA_QUERY_TYPE_NAMES, start=1):
-            cell = statistical_sheet.cell(row=1, column=start_col + index_head_col, value=name)
-            cell.alignment = _alignment
-            cell.font = _title_font
-
+        # 数据统计-列宽度设置 A-E
+        statistical_sheet.column_dimensions["A"].width = 15
+        for index in range(ord("B"), ord("E") + 1):
+            statistical_sheet.column_dimensions[chr(index)].width = 14
         col_name = ["抽卡总数", "5星出货次数", "出5星平均次数", "保底内抽数"]
-        # 行标题-统计项目
+        # 数据统计-行标题-统计项目
         for row, name in enumerate(col_name, 2):
             cell = statistical_sheet.cell(row=row, column=1, value=name)
             cell.font = _title_font
+
+        # 5星详情-列标题-卡池名 H - A
+        star_5_col_start = 7
+        for index_head_col, name in enumerate(GACHA_QUERY_TYPE_NAMES, start=1):
+            cell = statistical_sheet.cell(
+                row=1, column=star_5_col_start + index_head_col, value=name
+            )
+            cell.alignment = _alignment
+            cell.font = _title_font
+        # 5星详情-列宽度设置 H-K
+        for index in range(star_5_col_start, star_5_col_start + 5):
+            # 97 is "A" ASCII
+            statistical_sheet.column_dimensions[chr(index + 97)].width = 16
 
         for statistical_col, gacha_type_id in enumerate(GACHA_QUERY_TYPE_IDS, start=2):
             gacha_type_list = self.data["list"][gacha_type_id][:]
@@ -85,7 +89,7 @@ class XLSXGenerator(AbstractGenerator):
             worksheet.column_dimensions["B"].width = 22
             worksheet.column_dimensions["C"].width = 16
             worksheet.column_dimensions["F"].width = 16
-            worksheet.column_dimensions["G"].width = 16
+            worksheet.column_dimensions["G"].width = 14
             for index_head_col, name in enumerate(excel_header, 1):
                 cell = worksheet.cell(row=1, column=index_head_col, value=name)
                 cell.alignment = _alignment
@@ -132,7 +136,7 @@ class XLSXGenerator(AbstractGenerator):
                 five_average = (total_counter - pity_counter) / len(star_5_list)
                 five_average = round(five_average, 2)
 
-            # 5 星数据统计
+            # 5星数据统计
             statistical_data = [total_counter, len(star_5_list), five_average, pity_counter]
             for statistical_row, data in enumerate(statistical_data, start=2):
                 cell = statistical_sheet.cell(
@@ -144,7 +148,7 @@ class XLSXGenerator(AbstractGenerator):
             # 5星抽卡详情
             for star_5_row, five_start in enumerate(star_5_list, start=2):
                 cell = statistical_sheet.cell(
-                    row=star_5_row, column=start_col + statistical_col - 1, value=five_start
+                    row=star_5_row, column=star_5_col_start + statistical_col - 1, value=five_start
                 )
                 cell.alignment = _alignment
                 cell.font = _star_5_font
